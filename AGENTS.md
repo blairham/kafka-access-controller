@@ -59,8 +59,12 @@ from the network and cannot see a sibling directory.
 
 ## Repository, CI and releases
 
-Prepared for publication at `github.com/blairham/kafka-controller` (Apache-2.0
-with a CLA), but not pushed yet.
+Public at `github.com/blairham/kafka-controller` since 2026-10-06 (Apache-2.0
+with a CLA). `main` is guarded by repository ruleset 24595901, as
+database-controller's is: squash-only PRs, signed commits, linear history,
+stale reviews dismissed, resolved review threads, and every check below
+required on a branch up to date with `main`. Nobody bypasses it, admins
+included; a release's CHANGELOG and chart bump land as a PR too.
 
 - `.github/workflows/ci.yml` -- the required checks: **Pre-commit**,
   **Detect changed files** (skips code jobs for prose-only PRs without
