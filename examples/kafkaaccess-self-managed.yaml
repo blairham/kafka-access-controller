@@ -1,0 +1,32 @@
+# A self-managed cluster: the controller connects with SCRAM and also writes
+# the service's own SCRAM password from a Secret.
+apiVersion: kafka-controller.io/v1alpha1
+kind: KafkaAccess
+metadata:
+  name: ledger
+  namespace: ledger
+spec:
+  cluster:
+    bootstrapServers: [kafka-0.kafka.svc:9093]
+    tls:
+      caSecretRef:
+        name: kafka-ca          # key ca.crt
+    auth:
+      method: scram-sha-512
+      secretRef:
+        name: kafka-admin       # keys username, password
+  principal: User:ledger
+  scramCredential:
+    passwordSecretRef:
+      name: ledger-kafka        # key password
+  topics:
+    - name: ledger.entries
+      manage: true
+      partitions: 3
+      config:
+        cleanup.policy: compact
+      operations: [Read, Write]
+  consumerGroups:
+    - name: ledger
+      operations: [Read]
+  idempotentWrite: true

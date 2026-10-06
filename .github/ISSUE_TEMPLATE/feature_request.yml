@@ -1,0 +1,16 @@
+name: Feature request
+description: Something kafka-controller should provision or report
+labels: [enhancement]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What would you like a KafkaAccess to do?
+      description: The task, not the implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: where
+    attributes:
+      label: Which clusters?
+      description: MSK with IAM, SCRAM or mTLS; self-managed Kafka; Confluent; Redpanda. Data-plane work (inside the cluster) belongs here; creating clusters is ACK's or Crossplane's.

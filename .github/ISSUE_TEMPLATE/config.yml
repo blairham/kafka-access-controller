@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Report a vulnerability
+    url: https://github.com/blairham/kafka-controller/security/advisories/new
+    about: Privately, please -- especially an ACL wider than the spec asked for, a deletion of an ACL the resource did not own, or a credential in status, events or logs.

@@ -1,0 +1,133 @@
+version: 2
+
+# GoReleaser configuration for kafka-controller
+# See: https://goreleaser.com
+project_name: kafka-controller
+
+builds:
+  # Linux only, and image only.
+  - id: manager
+    binary: manager
+    main: ./cmd/manager
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w
+  # kactl plans, applies and renders IAM policies from a terminal, so it
+  # ships for laptops too.
+  - id: kactl
+    binary: kactl
+    main: ./cmd/kactl
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w
+
+archives:
+  - id: kactl
+    ids:
+      - kactl
+    formats:
+      - tar.gz
+    # this name template makes the OS and Arch compatible with the results of uname.
+    name_template: >-
+      kactl_ {{- title .Os }}_ {{- if eq .Arch "amd64" }}x86_64 {{- else }}{{ .Arch }}{{ end }}
+
+# macOS signing and notarization, skipped when the secrets are absent.
+notarize:
+  macos:
+    - enabled: '{{ isEnvSet "MACOS_SIGN_P12" }}'
+      ids:
+        - kactl
+      sign:
+        certificate: "{{.Env.MACOS_SIGN_P12}}"
+        password: "{{.Env.MACOS_SIGN_PASSWORD}}"
+      notarize:
+        issuer_id: "{{.Env.MACOS_NOTARY_ISSUER_ID}}"
+        key_id: "{{.Env.MACOS_NOTARY_KEY_ID}}"
+        key: "{{.Env.MACOS_NOTARY_KEY}}"
+        wait: true
+
+# The image the Helm chart pulls. --snapshot never builds the multi-arch index,
+# and SBOM attestation is on by default, so it is turned off.
+dockers_v2:
+  - id: image
+    ids:
+      - manager
+      - kactl
+    images:
+      - ghcr.io/blairham/kafka-controller
+    dockerfile: Dockerfile
+    flags:
+      - --target=release
+    platforms:
+      - linux/amd64
+      - linux/arm64
+    sbom: false
+    # `latest` moves only on a real release, never a prerelease.
+    tags:
+      - "{{ .Version }}"
+      - "{{ if not .Prerelease }}latest{{ end }}"
+    labels:
+      org.opencontainers.image.title: kafka-controller
+      org.opencontainers.image.description: Provisions topics, ACLs and SCRAM credentials on MSK and Apache Kafka
+      org.opencontainers.image.url: https://github.com/blairham/kafka-controller
+      org.opencontainers.image.source: https://github.com/blairham/kafka-controller
+      org.opencontainers.image.licenses: Apache-2.0
+      org.opencontainers.image.version: "{{ .Version }}"
+      org.opencontainers.image.revision: "{{ .FullCommit }}"
+      org.opencontainers.image.created: "{{ .Date }}"
+
+checksum:
+  name_template: 'checksums.txt'
+
+# Keyless cosign signatures from the release workflow's identity. Signing
+# checksums.txt covers every archive. See SECURITY.md to verify.
+signs:
+  - cmd: cosign
+    signature: "${artifact}.sigstore.json"
+    args:
+      - sign-blob
+      - "--bundle=${signature}"
+      - "${artifact}"
+      - "--yes"
+    artifacts: checksum
+
+# Each published image, by digest.
+docker_signs:
+  - cmd: cosign
+    args:
+      - sign
+      - "${artifact}@${digest}"
+      - "--yes"
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+# The notes are the tag's CHANGELOG.md section, passed by goreleaser.yml with
+# --release-notes, which replaces the generated commit list. Do not set
+# `changelog.disable`: it skips the stage that reads --release-notes too.
+
+release:
+  draft: false
+  replace_existing_draft: true
+  target_commitish: "{{ .Commit }}"
+  prerelease: auto
+  mode: replace
+  footer: |
+    **Full Changelog**: https://github.com/blairham/kafka-controller/compare/{{ .PreviousTag }}...{{ .Tag }}

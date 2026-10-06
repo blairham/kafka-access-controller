@@ -1,0 +1,24 @@
+# A service on MSK using IAM access control. No ACLs are planned; the
+# controller manages the topic and writes the IAM policy the service's role
+# needs to status.iamPolicy (or: kactl iam-policy -f this-file).
+apiVersion: kafka-controller.io/v1alpha1
+kind: KafkaAccess
+metadata:
+  name: shipping
+  namespace: shipping
+spec:
+  cluster:
+    bootstrapServers:
+      - b-1.prod.abc123.c2.kafka.us-east-1.amazonaws.com:9098
+    auth:
+      region: us-east-1
+    mskClusterARN: arn:aws:kafka:us-east-1:123456789012:cluster/prod/0b1c2d3e-aaaa-bbbb-cccc-1234567890ab-7
+  authorization: iam
+  topics:
+    - name: shipping.events
+      manage: true
+      partitions: 6
+      operations: [Read, Write]
+  consumerGroups:
+    - name: shipping
+      operations: [Read]

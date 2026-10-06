@@ -1,0 +1,57 @@
+name: Bug report
+description: Something kafka-controller did that it should not have
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. **If a KafkaAccess granted more than it asked
+        for, deleted an ACL it did not own, or a credential reached status,
+        events or logs, that is a security issue** -- report it privately
+        through Security → Report a vulnerability, not here.
+
+        Never paste passwords, SCRAM credentials, certificates or real broker
+        addresses. Redact them.
+  - type: input
+    id: version
+    attributes:
+      label: kafka-controller version or commit
+    validations:
+      required: true
+  - type: dropdown
+    id: part
+    attributes:
+      label: Which part?
+      options:
+        - controller (reconcile, status, finalizer, pruning)
+        - kactl
+        - Kafka engine (topics, ACLs, SCRAM)
+        - MSK IAM (admin auth or the rendered policy)
+        - Helm chart
+        - container image
+    validations:
+      required: true
+  - type: input
+    id: cluster
+    attributes:
+      label: Cluster and version
+      description: e.g. MSK 3.6.0 (IAM), Confluent Platform 7.7, Apache Kafka 3.9 (SCRAM), Redpanda 24.2
+    validations:
+      required: true
+  - type: textarea
+    id: spec
+    attributes:
+      label: The KafkaAccess (redacted)
+      render: yaml
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect instead?
+      description: '`kactl plan` output for the same spec is the most useful thing you can paste.'
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Controller logs
+      render: shell

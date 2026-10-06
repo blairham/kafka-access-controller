@@ -1,0 +1,36 @@
+# A service on MSK, authorized with ACLs. The controller connects with MSK IAM
+# (its pod's role); the service authenticates with SCRAM, so its ACLs apply.
+apiVersion: kafka-controller.io/v1alpha1
+kind: KafkaAccess
+metadata:
+  name: orders
+  namespace: orders
+spec:
+  cluster:
+    bootstrapServers:
+      - b-1.prod.abc123.c2.kafka.us-east-1.amazonaws.com:9098
+      - b-2.prod.abc123.c2.kafka.us-east-1.amazonaws.com:9098
+    auth:
+      method: msk-iam
+      region: us-east-1
+  principal: User:orders
+  topics:
+    - name: orders.events
+      manage: true
+      partitions: 12
+      replicationFactor: 3
+      config:
+        retention.ms: "604800000"
+        min.insync.replicas: "2"
+      operations: [Read, Write, Describe]
+    - name: payments.
+      patternType: Prefixed
+      operations: [Read]
+  consumerGroups:
+    - name: orders
+      operations: [Read]
+  transactionalIDs:
+    - name: orders-
+      patternType: Prefixed
+      operations: [Write, Describe]
+  revokeOnDelete: true

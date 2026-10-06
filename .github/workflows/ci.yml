@@ -1,0 +1,148 @@
+name: CI
+
+# Everything that gates a merge.
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+  push:
+    # A squash merge lands a tree no pull request built, so main gets its own run.
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # The same pinned hooks as the local commit gate, including golangci-lint.
+  pre-commit:
+    name: Pre-commit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+          check-latest: true
+          # go-mod-tidy-repo resolves the whole graph; uncached it is slow and flaky.
+          cache: true
+      - name: Run pre-commit hooks
+        uses: blairham/go-pre-commit@5788df636d2726ba06d337393503a7fe6b3451c2 # v4.6.7
+
+  # Gating happens inside the jobs, not with `paths:`, because a required check
+  # that never runs stays pending forever. Anything unrecognized counts as code.
+  changes:
+    name: Detect changed files
+    needs: pre-commit
+    runs-on: ubuntu-latest
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # the diff needs the base commit, not just HEAD
+      - id: filter
+        name: Is any of this code?
+        env:
+          BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          code=false
+          if [ "$GITHUB_EVENT_NAME" != pull_request ]; then
+            echo "push to $GITHUB_REF_NAME — running everything"
+            code=true
+          elif ! git cat-file -e "$BASE" 2>/dev/null; then
+            # No usable base (a force push): an empty diff would skip every test.
+            echo "base commit $BASE is not present — running everything"
+            code=true
+          else
+            while IFS= read -r f; do
+              [ -n "$f" ] || continue
+              case "$f" in
+                docs/*|*.md|LICENSE|LICENSE.*|*.png|*.jpg|*.gif|*.svg) ;; # prose
+                *) code=true; break ;;
+              esac
+            done <<<"$(git diff --name-only "$BASE"...HEAD)"
+          fi
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          echo "changed files are $([ "$code" = true ] && echo 'code — full run' || echo 'prose only — skipping the code jobs')"
+
+  test:
+    name: Build and test
+    needs: changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: needs.changes.outputs.code == 'true'
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        if: needs.changes.outputs.code == 'true'
+        with:
+          go-version-file: go.mod
+          check-latest: true
+          cache: true
+      - name: Build both binaries
+        if: needs.changes.outputs.code == 'true'
+        run: make build
+      - name: Verify the generated files are current
+        if: needs.changes.outputs.code == 'true'
+        run: make check-generated
+      - run: go vet -tags 'integration envtest' ./...
+        if: needs.changes.outputs.code == 'true'
+      - name: Unit tests
+        if: needs.changes.outputs.code == 'true'
+        run: go test -race ./...
+      # envtest downloads a kube-apiserver and etcd; no cluster, no Docker.
+      - name: Controller tests against a real API server
+        if: needs.changes.outputs.code == 'true'
+        run: make test-envtest
+
+  # The engine against a real broker: KRaft, the standard authorizer and a
+  # SCRAM listener, started by the same script as `make kafka-up`.
+  integration:
+    name: Kafka integration
+    needs: changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: needs.changes.outputs.code == 'true'
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        if: needs.changes.outputs.code == 'true'
+        with:
+          go-version-file: go.mod
+          check-latest: true
+          cache: true
+      - name: Run the engine against Apache Kafka
+        if: needs.changes.outputs.code == 'true'
+        run: make test-integration
+
+  # Build only; a v* tag publishes (goreleaser.yml).
+  image:
+    name: Build image
+    needs: [changes, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: needs.changes.outputs.code == 'true'
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+        if: needs.changes.outputs.code == 'true'
+      - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        if: needs.changes.outputs.code == 'true'
+        with:
+          context: .
+          push: false
+          tags: kafka-controller:ci
+
+  # Lints the chart and renders it with each toggle flipped.
+  charts:
+    name: Helm chart
+    needs: changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: needs.changes.outputs.code == 'true'
+      - uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1
+        if: needs.changes.outputs.code == 'true'
+      - name: Lint and render
+        if: needs.changes.outputs.code == 'true'
+        run: make helm-lint

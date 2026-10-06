@@ -1,0 +1,7 @@
+go test fuzz v1
+string("arn:aws:kafka:0:000000000000:cluster/0/\x8f")
+string("0")
+string("0")
+string("0")
+bool(true)
+bool(false)

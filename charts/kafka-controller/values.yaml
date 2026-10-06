@@ -1,0 +1,163 @@
+# Default values for kafka-controller. Keys follow the
+# aws-load-balancer-controller chart.
+
+replicaCount: 2
+revisionHistoryLimit: 10
+
+image:
+  repository: ghcr.io/blairham/kafka-controller
+  # Defaults to the chart's appVersion.
+  tag: ""
+  pullPolicy: IfNotPresent
+
+runtimeClassName: ""
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+autoscaling:
+  # Leave off: only the leader reconciles, so scaling adds standbys, not
+  # throughput.
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account, such as the IRSA role ARN
+  # (EKS Pod Identity needs none). For msk-iam the IAM role needs
+  # kafka-cluster:Connect and the topic, group and ACL-free admin actions it
+  # performs (Create/Alter/DescribeTopic, AlterTopicDynamicConfiguration).
+  annotations: {}
+  # The name of the service account to use. Generated from the fullname
+  # template when unset and create is true.
+  name: ""
+
+rbac:
+  # Specifies whether rbac resources should be created
+  create: true
+
+crds:
+  # Install the KafkaAccess CRD. It lives in templates/, not crds/, so Helm
+  # upgrades it.
+  install: true
+
+  # Keep the CRD on uninstall. Deleting it deletes every KafkaAccess, and
+  # those with revokeOnDelete would delete their ACLs.
+  keep: true
+
+podSecurityContext:
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
+terminationGracePeriodSeconds: 10
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 64Mi
+  limits:
+    memory: 256Mi
+
+priorityClassName: system-cluster-critical
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Spread replicas across nodes when affinity is not set explicitly.
+configureDefaultAffinity: true
+
+topologySpreadConstraints: []
+
+updateStrategy: {}
+  # type: RollingUpdate
+  # rollingUpdate:
+  #   maxSurge: 1
+  #   maxUnavailable: 1
+
+podDisruptionBudget: {}
+#  maxUnavailable: 1
+
+serviceAnnotations: {}
+deploymentAnnotations: {}
+podAnnotations: {}
+podLabels: {}
+additionalLabels: {}
+
+# Which controllers this manager runs. An unknown name fails startup.
+controllers:
+  - kafkaaccess
+
+# Restrict the manager to one namespace. Empty watches all namespaces.
+watchNamespace: ""
+
+# Leave on whenever replicas can exceed one, including during a rollout.
+enableLeaderElection: true
+
+metrics:
+  service:
+    enabled: true
+    port: 8080
+  serviceMonitor:
+    # Requires the Prometheus operator CRDs.
+    enabled: false
+    interval: 30s
+    additionalLabels: {}
+
+# Alerts on the per-resource metrics. Requires the Prometheus operator CRDs,
+# and the metrics to be scraped (metrics.serviceMonitor above, or your own).
+prometheusRule:
+  enabled: false
+  additionalLabels: {}
+  rules:
+    # kafka_controller_access_ready == 0: the last reconcile failed.
+    notReady:
+      enabled: true
+      for: 15m
+      severity: critical
+    # Not planned against the cluster for thresholdSeconds (two missed
+    # hourly drift passes).
+    stale:
+      enabled: true
+      thresholdSeconds: 7200
+      for: 10m
+      severity: warning
+    # pending_operations > 0 across two drift passes. Off by default: Observe
+    # resources show pending until their cutover.
+    notConverged:
+      enabled: false
+      for: 2h
+      severity: warning
+
+# Log encoding: json for anything that ships logs, console for a local rig.
+logEncoder: json
+logLevel: info
+
+# Extra arguments appended to the manager's command line.
+extraArgs: []
+
+# Extra environment variables on the manager container, e.g. to point the AWS
+# SDK at a stand-in credential agent.
+extraEnv: []
+#  - name: AWS_CONTAINER_CREDENTIALS_FULL_URI
+#    value: http://127.0.0.1:1338/v1/credentials
+
+# Extra containers in the manager pod, e.g. a credential agent sidecar (the AWS
+# SDK accepts AWS_CONTAINER_CREDENTIALS_FULL_URI only on loopback).
+# podSecurityContext applies to them: an image with a non-numeric user needs an
+# explicit numeric runAsUser.
+extraContainers: []
+
+extraVolumes: []
+extraVolumeMounts: []
