@@ -8,6 +8,8 @@ Pre-stable releases (`v0.x.y`) make no API-stability promise -- breaking changes
 
 ## [Unreleased]
 
+## [0.0.0] - 2026-10-07
+
 ### Added
 
 - The `KafkaAccess` API (`kafka-controller.io/v1alpha1`): one resource per
