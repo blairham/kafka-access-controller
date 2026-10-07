@@ -202,6 +202,31 @@ func TestIAMAuthorizationPlansNoACLs(t *testing.T) {
 	}
 }
 
+// A broker with no authorizer refuses every ACL call, so a resource that only
+// manages topics must converge without making one.
+func TestTopicsOnlyNeverReadsACLs(t *testing.T) {
+	t.Parallel()
+	f := kafkatest.New()
+	f.NoAuthorizer = true
+	e := kafka.New(f)
+	a := kafka.Access{
+		Principal:     "User:rig",
+		Authorization: kafka.AuthorizationACL,
+		Topics:        []kafka.Topic{{Name: "book", Manage: true, Partitions: i32(6), ReplicationFactor: 1}},
+	}
+	apply(t, e, a)
+	if got := pending(t, e, a); len(got) != 0 {
+		t.Errorf("converged plan = %q, want empty", got)
+	}
+	if f.TopicMap["book"].Partitions != 6 {
+		t.Errorf("topic = %+v, want 6 partitions", f.TopicMap["book"])
+	}
+	p, err := e.BuildRevokePlan(context.Background(), a)
+	if err != nil || p.Len() != 0 {
+		t.Errorf("revoke plan has %d steps, err %v", p.Len(), err)
+	}
+}
+
 func TestRevokeDeletesOnlyDeclaredACLs(t *testing.T) {
 	t.Parallel()
 	f := kafkatest.New()

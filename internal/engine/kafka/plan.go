@@ -86,7 +86,11 @@ func (e *Engine) BuildPlan(ctx context.Context, a Access) (*plan.Plan, error) {
 	}
 	p.Add(steps...)
 
-	if a.Authorization == AuthorizationACL {
+	// A resource that declares no ACLs must not READ them either. A broker
+	// with no authorizer (a dev or test cluster) answers DescribeACLs with
+	// SECURITY_DISABLED, so asking anyway fails the whole plan and a
+	// topics-only resource could never converge there.
+	if desired := DesiredACLs(a); a.Authorization == AuthorizationACL && len(desired) > 0 {
 		held, err := e.admin.ACLs(ctx, a.Principal)
 		if err != nil {
 			return nil, fmt.Errorf("describing ACLs for %s: %w", a.Principal, err)
@@ -95,7 +99,7 @@ func (e *Engine) BuildPlan(ctx context.Context, a Access) (*plan.Plan, error) {
 		for _, acl := range held {
 			have[acl] = true
 		}
-		for _, acl := range DesiredACLs(a) {
+		for _, acl := range desired {
 			if have[acl] {
 				continue
 			}
@@ -112,7 +116,8 @@ func (e *Engine) BuildPlan(ctx context.Context, a Access) (*plan.Plan, error) {
 // and credentials are never deleted.
 func (e *Engine) BuildRevokePlan(ctx context.Context, a Access) (*plan.Plan, error) {
 	var p plan.Plan
-	if a.Authorization != AuthorizationACL {
+	desired := DesiredACLs(a)
+	if a.Authorization != AuthorizationACL || len(desired) == 0 {
 		return &p, nil
 	}
 	held, err := e.admin.ACLs(ctx, a.Principal)
@@ -123,7 +128,7 @@ func (e *Engine) BuildRevokePlan(ctx context.Context, a Access) (*plan.Plan, err
 	for _, acl := range held {
 		have[acl] = true
 	}
-	for _, acl := range DesiredACLs(a) {
+	for _, acl := range desired {
 		if !have[acl] {
 			continue
 		}

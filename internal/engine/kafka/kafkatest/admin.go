@@ -24,6 +24,9 @@ type Admin struct {
 	Upserts   int
 	mu        sync.Mutex
 	FailACLs  bool
+	// NoAuthorizer makes every ACL call fail as a broker with no authorizer
+	// does (SECURITY_DISABLED), so a test can prove a plan never asks.
+	NoAuthorizer bool
 }
 
 // New returns an empty cluster.
@@ -99,6 +102,9 @@ func (f *Admin) SetTopicConfig(_ context.Context, name string, cfg map[string]st
 func (f *Admin) ACLs(_ context.Context, principal string) ([]kafka.ACL, error) {
 	f.mu.Lock()
 	defer f.mu.Unlock()
+	if f.NoAuthorizer {
+		return nil, errors.New("SECURITY_DISABLED: No Authorizer is configured on the broker")
+	}
 	var out []kafka.ACL
 	for a := range f.Granted {
 		if a.Principal == principal {
