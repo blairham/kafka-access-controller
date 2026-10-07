@@ -12,8 +12,9 @@ import (
 type AuthMethod string
 
 const (
-	// AuthMSKIAM signs the AWS_MSK_IAM SASL handshake with the ambient AWS
-	// credentials. The production path on MSK, and the default.
+	// AuthMSKIAM authenticates with MSK IAM over SASL/OAUTHBEARER, signing for
+	// cluster.auth.region with the ambient AWS credentials. The production
+	// path on MSK, and the default.
 	AuthMSKIAM AuthMethod = "msk-iam"
 
 	// AuthSCRAMSHA512 reads a username and password from a Secret. MSK's

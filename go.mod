@@ -3,8 +3,9 @@ module github.com/blairham/kafka-controller
 go 1.26.8
 
 require (
+	github.com/aws/aws-msk-iam-sasl-signer-go v1.0.4
 	github.com/aws/aws-sdk-go-v2/config v1.33.6
-	github.com/blairham/k8s-controller-kit v0.0.0
+	github.com/blairham/k8s-controller-kit v0.0.1
 	github.com/hashicorp/cli v1.1.7
 	github.com/prometheus/client_golang v1.24.1
 	github.com/twmb/franz-go v1.22.1

@@ -8,6 +8,15 @@ Pre-stable releases (`v0.x.y`) make no API-stability promise -- breaking changes
 
 ## [Unreleased]
 
+### Fixed
+
+- MSK IAM signs for `cluster.auth.region` whatever the broker is called. It
+  now authenticates over SASL/OAUTHBEARER with AWS's MSK signer; AWS_MSK_IAM
+  read the region only from an `*.amazonaws.com` host or `AWS_REGION`, so a
+  PrivateLink alias or proxy failed every handshake.
+- A reconcile that fails no longer leaves a stale `Converged` condition,
+  pending list or warnings in status (k8s-controller-kit v0.0.1).
+
 ## [0.0.0] - 2026-10-07
 
 ### Added
