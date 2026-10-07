@@ -8,8 +8,13 @@ Pre-stable releases (`v0.x.y`) make no API-stability promise -- breaking changes
 
 ## [Unreleased]
 
+## [0.0.1] - 2026-10-07
+
 ### Fixed
 
+- A `KafkaAccess` that declares no ACLs plans without reading the
+  principal's ACLs, so topics-only resources converge on a broker with no
+  authorizer instead of failing with `SECURITY_DISABLED`.
 - MSK IAM signs for `cluster.auth.region` whatever the broker is called. It
   now authenticates over SASL/OAUTHBEARER with AWS's MSK signer; AWS_MSK_IAM
   read the region only from an `*.amazonaws.com` host or `AWS_REGION`, so a
