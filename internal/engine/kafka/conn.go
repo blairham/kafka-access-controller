@@ -12,10 +12,11 @@ import (
 	"net"
 	"time"
 
+	"github.com/aws/aws-msk-iam-sasl-signer-go/signer"
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"github.com/twmb/franz-go/pkg/sasl"
-	saslaws "github.com/twmb/franz-go/pkg/sasl/aws"
+	"github.com/twmb/franz-go/pkg/sasl/oauth"
 	"github.com/twmb/franz-go/pkg/sasl/plain"
 	"github.com/twmb/franz-go/pkg/sasl/scram"
 )
@@ -145,19 +146,23 @@ func mechanism(ctx context.Context, c ConnConfig) (sasl.Mechanism, error) {
 		if err != nil {
 			return nil, fmt.Errorf("loading AWS credentials: %w", err)
 		}
-		// Credentials are fetched per connection, so a rotated Pod Identity
-		// or IRSA credential is picked up without a restart.
-		return saslaws.ManagedStreamingIAM(func(ctx context.Context) (saslaws.Auth, error) {
-			creds, err := awsCfg.Credentials.Retrieve(ctx)
+		// OAUTHBEARER with AWS's MSK signer, not franz-go's AWS_MSK_IAM: that
+		// mechanism has no region input. It reads the region from an
+		// *.amazonaws.com broker host and otherwise only from AWS_REGION, so
+		// spec.cluster.auth.region never reached the signature and a broker
+		// behind any other name (a PrivateLink alias, a rig's IAM proxy) failed
+		// every handshake with "cannot determine the region". MSK serves both
+		// mechanisms on its IAM listener.
+		//
+		// A token is minted per connection, so a rotated Pod Identity or IRSA
+		// credential is picked up without a restart.
+		region, creds := c.Region, awsCfg.Credentials
+		return oauth.Oauth(func(ctx context.Context) (oauth.Auth, error) {
+			token, _, err := signer.GenerateAuthTokenFromCredentialsProvider(ctx, region, creds)
 			if err != nil {
-				return saslaws.Auth{}, err
+				return oauth.Auth{}, fmt.Errorf("signing the MSK IAM token: %w", err)
 			}
-			return saslaws.Auth{
-				AccessKey:    creds.AccessKeyID,
-				SecretKey:    creds.SecretAccessKey,
-				SessionToken: creds.SessionToken,
-				UserAgent:    "kafka-controller",
-			}, nil
+			return oauth.Auth{Token: token}, nil
 		}), nil
 	case AuthSCRAMSHA512:
 		return scram.Auth{User: c.Username, Pass: c.Password}.AsSha512Mechanism(), nil

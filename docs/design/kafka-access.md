@@ -94,8 +94,10 @@ so not here. ACLs for an MSK SCRAM user are data plane and work normally.
 
 ## Connection
 
-`cluster.auth.method`: `msk-iam` (default; the AWS_MSK_IAM SASL mechanism,
-signed with the pod's ambient credentials and refreshed per connection),
+`cluster.auth.method`: `msk-iam` (default; MSK IAM over SASL/OAUTHBEARER,
+signed for `auth.region` with the pod's ambient credentials and refreshed per
+connection — not AWS_MSK_IAM, whose signer reads the region only from an
+`*.amazonaws.com` broker host or `AWS_REGION`),
 `scram-sha-512`/`scram-sha-256`, `mtls`, `plain` (refused without TLS) or
 `none`. TLS defaults on; `tls.caSecretRef` adds a private CA. Credentials are
 read from Secrets in the resource's own namespace only (`k8s-controller-kit/secret`).
