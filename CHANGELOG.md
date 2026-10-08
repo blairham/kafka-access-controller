@@ -10,6 +10,10 @@ Pre-stable releases (`v0.x.y`) make no API-stability promise -- breaking changes
 
 ## [0.0.2] - 2026-10-08
 
+Published as the image `ghcr.io/blairham/kafka-access-controller:0.0.2`
+only: creating the GitHub release failed, so there are no `kactl` archives
+or release-attached provenance for this version. Use 0.0.3.
+
 ### Changed
 
 - **Breaking:** renamed to `kafka-access-controller`, after the one thing it
