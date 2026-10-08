@@ -84,6 +84,11 @@ chart bump land as a PR too.
   `appVersion` does not match the tag, or the CHANGELOG has no section for it.
   Read `.claude/commands/release-tag.md` before cutting one; the first tag is
   `v0.0.0`.
+- The same tag runs `chart.yml`, which pushes the chart to
+  `oci://ghcr.io/blairham/charts/kafka-access-controller:<version>` and signs
+  it; it refuses unless both `version` and `appVersion` match the tag. It is
+  its own workflow so an existing tag can be published alone:
+  `gh workflow run chart.yml -f tag=vX.Y.Z`.
 - `osv-scanner.toml` ignores one advisory, with its reason; re-check it when
   the module graph changes.
 - `SECURITY.md` states what the controller can do with its admin principal

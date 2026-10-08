@@ -57,10 +57,16 @@ with [database-access-controller](https://github.com/blairham/database-access-co
 
 ## Install
 
+Each release publishes the chart to `oci://ghcr.io/blairham/charts`, signed
+like the image, so a pinned version installs without a checkout:
+
 ```sh
-helm install kafka-access-controller charts/kafka-access-controller \
+helm install kafka-access-controller oci://ghcr.io/blairham/charts/kafka-access-controller \
+  --version <version> \
   --namespace kafka-access-controller-system --create-namespace
 ```
+
+See [the chart README](charts/kafka-access-controller/README.md) for values.
 
 Read [`SECURITY.md`](SECURITY.md) before granting anyone `KafkaAccess`
 create rights: the controller acts with an administrative principal.

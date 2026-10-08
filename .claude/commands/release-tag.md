@@ -33,3 +33,7 @@ Steps:
    archives, `checksums.txt`, `checksums.txt.sigstore.json` and
    `kafka-access-controller-$1.intoto.jsonl`, and that
    `ghcr.io/blairham/kafka-access-controller:X.Y.Z` is signed (SECURITY.md).
+7. Watch the Publish chart workflow (`chart.yml`, same tag) and check that
+   `ghcr.io/blairham/charts/kafka-access-controller:X.Y.Z` exists and is
+   signed (SECURITY.md). If it failed, rerun it alone with
+   `gh workflow run chart.yml -f tag=$1`.
