@@ -5,7 +5,7 @@
 // ACLs and credentials a service needs on a Kafka cluster.
 //
 // +kubebuilder:object:generate=true
-// +groupName=kafka-controller.io
+// +groupName=kafka-access-controller.io
 package v1alpha1
 
 import (
@@ -16,7 +16,7 @@ import (
 
 var (
 	// GroupVersion is the group and version for this API.
-	GroupVersion = schema.GroupVersion{Group: "kafka-controller.io", Version: "v1alpha1"}
+	GroupVersion = schema.GroupVersion{Group: "kafka-access-controller.io", Version: "v1alpha1"}
 
 	// SchemeBuilder registers this API's types with a runtime.Scheme. It is
 	// apimachinery's builder, not controller-runtime's: an API package should

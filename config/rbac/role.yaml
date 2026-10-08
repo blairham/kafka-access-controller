@@ -2,7 +2,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: kafka-controller
+  name: kafka-access-controller
 rules:
 - apiGroups:
   - ""
@@ -20,7 +20,7 @@ rules:
   - list
   - watch
 - apiGroups:
-  - kafka-controller.io
+  - kafka-access-controller.io
   resources:
   - kafkaaccesses
   verbs:
@@ -32,13 +32,13 @@ rules:
   - update
   - watch
 - apiGroups:
-  - kafka-controller.io
+  - kafka-access-controller.io
   resources:
   - kafkaaccesses/finalizers
   verbs:
   - update
 - apiGroups:
-  - kafka-controller.io
+  - kafka-access-controller.io
   resources:
   - kafkaaccesses/status
   verbs:

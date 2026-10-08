@@ -11,8 +11,8 @@ import (
 
 	"github.com/blairham/k8s-controller-kit/reconciler"
 
-	"github.com/blairham/kafka-controller/internal/engine/kafka"
-	"github.com/blairham/kafka-controller/internal/engine/kafka/kafkatest"
+	"github.com/blairham/kafka-access-controller/internal/engine/kafka"
+	"github.com/blairham/kafka-access-controller/internal/engine/kafka/kafkatest"
 )
 
 func pending(t *testing.T, e *kafka.Engine, a kafka.Access) []string {

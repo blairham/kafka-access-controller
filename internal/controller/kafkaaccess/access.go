@@ -4,8 +4,8 @@
 package kafkaaccess
 
 import (
-	kafkav1alpha1 "github.com/blairham/kafka-controller/apis/kafka/v1alpha1"
-	"github.com/blairham/kafka-controller/internal/engine/kafka"
+	kafkav1alpha1 "github.com/blairham/kafka-access-controller/apis/kafka/v1alpha1"
+	"github.com/blairham/kafka-access-controller/internal/engine/kafka"
 )
 
 // Access flattens the spec into the engine-neutral shape, applying the CRD's

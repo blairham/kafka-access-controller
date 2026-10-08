@@ -1,4 +1,4 @@
-# golangci-lint v2 configuration for kafka-controller.
+# golangci-lint v2 configuration for kafka-access-controller.
 # See: https://golangci-lint.run/usage/configuration/
 #
 # golangci-lint is pinned twice and the two must move together: go.mod's `tool`
@@ -207,7 +207,7 @@ formatters:
   settings:
     goimports:
       local-prefixes:
-        - github.com/blairham/kafka-controller
+        - github.com/blairham/kafka-access-controller
 
     gofumpt:
       extra-rules: true
@@ -216,7 +216,7 @@ formatters:
       sections:
         - standard
         - default
-        - prefix(github.com/blairham/kafka-controller)
+        - prefix(github.com/blairham/kafka-access-controller)
 
     golines:
       max-len: 120

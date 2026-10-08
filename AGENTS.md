@@ -1,4 +1,4 @@
-# AGENTS.md — kafka-controller
+# AGENTS.md — kafka-access-controller
 
 Guidance for AI coding agents working in this repo. `CLAUDE.md` imports it, and
 other tools read this file directly.
@@ -10,7 +10,7 @@ for a service: its topics, the ACLs on them, and its SCRAM credential. It works
 on MSK (IAM, SCRAM or mTLS) and on any cluster that speaks the Kafka admin API.
 The sibling of `database-access-controller`; both are built on `k8s-controller-kit`.
 
-- Module: `github.com/blairham/kafka-controller`
+- Module: `github.com/blairham/kafka-access-controller`
 - Go 1.26, `controller-runtime` v0.25, `franz-go` (kgo/kadm), `aws-sdk-go-v2`,
   `hashicorp/cli`, `github.com/blairham/k8s-controller-kit`
 
@@ -41,7 +41,7 @@ internal/controller/kafkaaccess/ wiring onto k8s-controller-kit's reconciler
 cmd/manager/                     the controller binary (k8s-controller-kit/manager)
 cmd/kactl/                       plan, apply and iam-policy from a terminal
 config/crd/, config/rbac/        generated manifests -- never hand-edit
-charts/kafka-controller/         the Helm chart; the install path
+charts/kafka-access-controller/         the Helm chart; the install path
 hack/kafka-test/                 the integration broker
 docs/design/                     why the design is shaped this way
 ```
@@ -59,7 +59,7 @@ from the network and cannot see a sibling directory.
 
 ## Repository, CI and releases
 
-Public at `github.com/blairham/kafka-controller` since 2026-10-06 (Apache-2.0
+Public at `github.com/blairham/kafka-access-controller` since 2026-10-06 (Apache-2.0
 with a CLA). `main` is guarded by repository ruleset 24595901, as
 database-access-controller's is: squash-only PRs, signed commits, linear history,
 stale reviews dismissed, resolved review threads, and every check below
@@ -76,7 +76,7 @@ included; a release's CHANGELOG and chart bump land as a PR too.
   Dependabot moves the pins, the Go modules (aws-sdk, Kubernetes and
   franz-go as groups) and the Dockerfile bases.
 - A **`v*` tag is what publishes**: `goreleaser.yml` runs GoReleaser, which
-  pushes `ghcr.io/blairham/kafka-controller:<version>` (amd64 and arm64) and
+  pushes `ghcr.io/blairham/kafka-access-controller:<version>` (amd64 and arm64) and
   a `kactl` archive per platform, signed with keyless cosign, with SLSA
   provenance for the archives and the image. The notes are the tag's
   `CHANGELOG.md` section. The release refuses to publish when `Chart.yaml`'s

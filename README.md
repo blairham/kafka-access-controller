@@ -1,10 +1,10 @@
-# kafka-controller
+# kafka-access-controller
 
-[![CI](https://github.com/blairham/kafka-controller/actions/workflows/ci.yml/badge.svg)](https://github.com/blairham/kafka-controller/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/tag/blairham/kafka-controller?sort=semver&label=release)](https://github.com/blairham/kafka-controller/releases)
-[![CodeQL](https://github.com/blairham/kafka-controller/actions/workflows/codeql.yml/badge.svg)](https://github.com/blairham/kafka-controller/actions/workflows/codeql.yml)
-[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/blairham/kafka-controller/badge)](https://scorecard.dev/viewer/?uri=github.com/blairham/kafka-controller)
-[![Go version](https://img.shields.io/github/go-mod/go-version/blairham/kafka-controller)](go.mod)
+[![CI](https://github.com/blairham/kafka-access-controller/actions/workflows/ci.yml/badge.svg)](https://github.com/blairham/kafka-access-controller/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/tag/blairham/kafka-access-controller?sort=semver&label=release)](https://github.com/blairham/kafka-access-controller/releases)
+[![CodeQL](https://github.com/blairham/kafka-access-controller/actions/workflows/codeql.yml/badge.svg)](https://github.com/blairham/kafka-access-controller/actions/workflows/codeql.yml)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/blairham/kafka-access-controller/badge)](https://scorecard.dev/viewer/?uri=github.com/blairham/kafka-access-controller)
+[![Go version](https://img.shields.io/github/go-mod/go-version/blairham/kafka-access-controller)](go.mod)
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
 A Kubernetes controller that provisions what a service needs **inside** a Kafka
@@ -13,7 +13,7 @@ cluster: its topics, the ACLs on them, and its SCRAM credential. One
 speaks the Kafka admin API.
 
 ```yaml
-apiVersion: kafka-controller.io/v1alpha1
+apiVersion: kafka-access-controller.io/v1alpha1
 kind: KafkaAccess
 metadata:
   name: orders
@@ -58,8 +58,8 @@ with [database-access-controller](https://github.com/blairham/database-access-co
 ## Install
 
 ```sh
-helm install kafka-controller charts/kafka-controller \
-  --namespace kafka-controller-system --create-namespace
+helm install kafka-access-controller charts/kafka-access-controller \
+  --namespace kafka-access-controller-system --create-namespace
 ```
 
 Read [`SECURITY.md`](SECURITY.md) before granting anyone `KafkaAccess`

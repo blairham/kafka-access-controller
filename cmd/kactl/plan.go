@@ -15,10 +15,10 @@ import (
 	"github.com/blairham/k8s-controller-kit/plan"
 	"sigs.k8s.io/yaml"
 
-	kafkav1alpha1 "github.com/blairham/kafka-controller/apis/kafka/v1alpha1"
-	"github.com/blairham/kafka-controller/internal/controller/kafkaaccess"
-	"github.com/blairham/kafka-controller/internal/engine/kafka"
-	"github.com/blairham/kafka-controller/internal/mskiam"
+	kafkav1alpha1 "github.com/blairham/kafka-access-controller/apis/kafka/v1alpha1"
+	"github.com/blairham/kafka-access-controller/internal/controller/kafkaaccess"
+	"github.com/blairham/kafka-access-controller/internal/engine/kafka"
+	"github.com/blairham/kafka-access-controller/internal/mskiam"
 )
 
 // envHelp documents where kactl reads what the controller reads from Secrets.

@@ -8,6 +8,16 @@ Pre-stable releases (`v0.x.y`) make no API-stability promise -- breaking changes
 
 ## [Unreleased]
 
+### Changed
+
+- **Breaking:** renamed to `kafka-access-controller`, after the one thing it
+  reconciles. The API group is now `kafka-access-controller.io`, the Go
+  module `github.com/blairham/kafka-access-controller`, the image and Helm
+  chart `ghcr.io/blairham/kafka-access-controller`, the metrics prefix
+  `kafka_access_controller_`, and the revoke annotation
+  `kafka-access-controller.io/revoke-on-delete`. Resources created under
+  `kafka-controller.io` are not migrated; re-apply them under the new group.
+
 ## [0.0.1] - 2026-10-07
 
 ### Fixed
@@ -26,7 +36,7 @@ Pre-stable releases (`v0.x.y`) make no API-stability promise -- breaking changes
 
 ### Added
 
-- The `KafkaAccess` API (`kafka-controller.io/v1alpha1`): one resource per
+- The `KafkaAccess` API (`kafka-access-controller.io/v1alpha1`): one resource per
   service declaring its cluster, principal, topics, consumer groups,
   transactional ids, idempotent write and SCRAM credential, with
   admission-time validation of every field.

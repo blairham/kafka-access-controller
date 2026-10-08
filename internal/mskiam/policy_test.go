@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/blairham/kafka-controller/internal/engine/kafka"
-	"github.com/blairham/kafka-controller/internal/mskiam"
+	"github.com/blairham/kafka-access-controller/internal/engine/kafka"
+	"github.com/blairham/kafka-access-controller/internal/mskiam"
 )
 
 const clusterARN = "arn:aws:kafka:us-east-1:123456789012:cluster/prod/0b1c2d3e-aaaa-bbbb-cccc-1234567890ab-7"

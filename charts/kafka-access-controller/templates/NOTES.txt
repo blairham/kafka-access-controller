@@ -1,4 +1,4 @@
-{{ .Chart.Name }} {{ .Chart.AppVersion }} is installed as {{ include "kafka-controller.fullname" . }}.
+{{ .Chart.Name }} {{ .Chart.AppVersion }} is installed as {{ include "kafka-access-controller.fullname" . }}.
 
 Watching: {{ if .Values.watchNamespace }}namespace {{ .Values.watchNamespace }}{{ else }}all namespaces{{ end }}
 Replicas: {{ .Values.replicaCount }}{{ if .Values.enableLeaderElection }} (leader-elected){{ end }}
@@ -15,7 +15,7 @@ Replicas: {{ .Values.replicaCount }}{{ if .Values.enableLeaderElection }} (leade
 ⚠ NO ANNOTATIONS ON THE SERVICE ACCOUNT. The default admin auth is MSK IAM,
   signed with whatever AWS credentials the pod has. On EKS that comes from a
   Pod Identity Association or an IRSA role annotation on
-  {{ include "kafka-controller.serviceAccountName" . }}, and the role needs
+  {{ include "kafka-access-controller.serviceAccountName" . }}, and the role needs
   kafka-cluster:Connect plus the topic and ACL admin actions on the cluster.
 
   Without it, connections fail at reconcile time rather than at install, and
@@ -27,7 +27,7 @@ Replicas: {{ .Values.replicaCount }}{{ if .Values.enableLeaderElection }} (leade
 
 Create access for a service:
 
-  apiVersion: kafka-controller.io/v1alpha1
+  apiVersion: kafka-access-controller.io/v1alpha1
   kind: KafkaAccess
   metadata:
     name: my-service

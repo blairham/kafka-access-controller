@@ -1,6 +1,6 @@
 GO ?= go
 BIN ?= bin
-IMG ?= kafka-controller:dev
+IMG ?= kafka-access-controller:dev
 
 .PHONY: all
 all: generate fmt vet test build
@@ -9,24 +9,24 @@ all: generate fmt vet test build
 generate: ## Regenerate deepcopy, CRDs, RBAC, and sync them into the chart.
 	$(GO) tool controller-gen object:headerFile=hack/boilerplate.go.txt paths=./apis/...
 	$(GO) tool controller-gen crd paths=./apis/... output:crd:artifacts:config=config/crd
-	$(GO) tool controller-gen rbac:roleName=kafka-controller paths=./internal/... output:rbac:artifacts:config=config/rbac
+	$(GO) tool controller-gen rbac:roleName=kafka-access-controller paths=./internal/... output:rbac:artifacts:config=config/rbac
 	./hack/sync-chart.sh
 
 .PHONY: helm-lint
 helm-lint: ## Lint and render the chart, including with the toggles flipped.
-	helm lint charts/kafka-controller
-	helm template kafka-controller charts/kafka-controller >/dev/null
-	helm template kafka-controller charts/kafka-controller --set crds.install=false >/dev/null
-	helm template kafka-controller charts/kafka-controller --set rbac.create=false >/dev/null
-	helm template kafka-controller charts/kafka-controller --set autoscaling.enabled=true >/dev/null
-	helm template kafka-controller charts/kafka-controller --set podDisruptionBudget.maxUnavailable=1 >/dev/null
-	helm template kafka-controller charts/kafka-controller --set metrics.serviceMonitor.enabled=true >/dev/null
-	helm template kafka-controller charts/kafka-controller --set prometheusRule.enabled=true >/dev/null
+	helm lint charts/kafka-access-controller
+	helm template kafka-access-controller charts/kafka-access-controller >/dev/null
+	helm template kafka-access-controller charts/kafka-access-controller --set crds.install=false >/dev/null
+	helm template kafka-access-controller charts/kafka-access-controller --set rbac.create=false >/dev/null
+	helm template kafka-access-controller charts/kafka-access-controller --set autoscaling.enabled=true >/dev/null
+	helm template kafka-access-controller charts/kafka-access-controller --set podDisruptionBudget.maxUnavailable=1 >/dev/null
+	helm template kafka-access-controller charts/kafka-access-controller --set metrics.serviceMonitor.enabled=true >/dev/null
+	helm template kafka-access-controller charts/kafka-access-controller --set prometheusRule.enabled=true >/dev/null
 
 # Exactly the paths `generate` writes; the rest of the chart is hand-maintained.
 GENERATED_PATHS = config apis/kafka/v1alpha1/zz_generated.deepcopy.go \
-                  charts/kafka-controller/templates/crds.yaml \
-                  charts/kafka-controller/templates/rbac.yaml
+                  charts/kafka-access-controller/templates/crds.yaml \
+                  charts/kafka-access-controller/templates/rbac.yaml
 
 .PHONY: check-generated
 check-generated: generate ## Fail if the generated files are out of date.

@@ -24,7 +24,7 @@ import (
 	"github.com/twmb/franz-go/pkg/kgo"
 	"github.com/twmb/franz-go/pkg/sasl/scram"
 
-	"github.com/blairham/kafka-controller/internal/engine/kafka"
+	"github.com/blairham/kafka-access-controller/internal/engine/kafka"
 )
 
 func bootstrap(t *testing.T) string {

@@ -1,8 +1,8 @@
 version: 2
 
-# GoReleaser configuration for kafka-controller
+# GoReleaser configuration for kafka-access-controller
 # See: https://goreleaser.com
-project_name: kafka-controller
+project_name: kafka-access-controller
 
 builds:
   # Linux only, and image only.
@@ -71,7 +71,7 @@ dockers_v2:
       - manager
       - kactl
     images:
-      - ghcr.io/blairham/kafka-controller
+      - ghcr.io/blairham/kafka-access-controller
     dockerfile: Dockerfile
     flags:
       - --target=release
@@ -84,10 +84,10 @@ dockers_v2:
       - "{{ .Version }}"
       - "{{ if not .Prerelease }}latest{{ end }}"
     labels:
-      org.opencontainers.image.title: kafka-controller
+      org.opencontainers.image.title: kafka-access-controller
       org.opencontainers.image.description: Provisions topics, ACLs and SCRAM credentials on MSK and Apache Kafka
-      org.opencontainers.image.url: https://github.com/blairham/kafka-controller
-      org.opencontainers.image.source: https://github.com/blairham/kafka-controller
+      org.opencontainers.image.url: https://github.com/blairham/kafka-access-controller
+      org.opencontainers.image.source: https://github.com/blairham/kafka-access-controller
       org.opencontainers.image.licenses: Apache-2.0
       org.opencontainers.image.version: "{{ .Version }}"
       org.opencontainers.image.revision: "{{ .FullCommit }}"
@@ -130,4 +130,4 @@ release:
   prerelease: auto
   mode: replace
   footer: |
-    **Full Changelog**: https://github.com/blairham/kafka-controller/compare/{{ .PreviousTag }}...{{ .Tag }}
+    **Full Changelog**: https://github.com/blairham/kafka-access-controller/compare/{{ .PreviousTag }}...{{ .Tag }}

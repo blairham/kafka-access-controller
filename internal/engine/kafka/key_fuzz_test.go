@@ -6,7 +6,7 @@ package kafka_test
 import (
 	"testing"
 
-	"github.com/blairham/kafka-controller/internal/engine/kafka"
+	"github.com/blairham/kafka-access-controller/internal/engine/kafka"
 )
 
 // FuzzACLKey covers ownership keys, which come back from status -- anything

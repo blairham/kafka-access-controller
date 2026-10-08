@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/blairham/kafka-controller/internal/engine/kafka"
-	"github.com/blairham/kafka-controller/internal/mskiam"
+	"github.com/blairham/kafka-access-controller/internal/engine/kafka"
+	"github.com/blairham/kafka-access-controller/internal/mskiam"
 )
 
 // FuzzPolicy feeds an ARN and resource names as a spec could carry them.

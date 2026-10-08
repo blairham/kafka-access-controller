@@ -11,8 +11,8 @@ import (
 	"github.com/blairham/k8s-controller-kit/secret"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	kafkav1alpha1 "github.com/blairham/kafka-controller/apis/kafka/v1alpha1"
-	"github.com/blairham/kafka-controller/internal/engine/kafka"
+	kafkav1alpha1 "github.com/blairham/kafka-access-controller/apis/kafka/v1alpha1"
+	"github.com/blairham/kafka-access-controller/internal/engine/kafka"
 )
 
 // Engine is what the reconciler needs from an engine; envtest fakes it.
@@ -59,7 +59,7 @@ func ConnConfig(ka *kafkav1alpha1.KafkaAccess, lookup Lookup) (kafka.ConnConfig,
 		Brokers:  cl.BootstrapServers,
 		TLS:      true,
 		Auth:     kafka.AuthMSKIAM,
-		ClientID: "kafka-controller/" + ka.Namespace + "/" + ka.Name,
+		ClientID: "kafka-access-controller/" + ka.Namespace + "/" + ka.Name,
 	}
 	if t := cl.TLS; t != nil {
 		if t.Enabled != nil {

@@ -1,11 +1,11 @@
-# Default values for kafka-controller. Keys follow the
+# Default values for kafka-access-controller. Keys follow the
 # aws-load-balancer-controller chart.
 
 replicaCount: 2
 revisionHistoryLimit: 10
 
 image:
-  repository: ghcr.io/blairham/kafka-controller
+  repository: ghcr.io/blairham/kafka-access-controller
   # Defaults to the chart's appVersion.
   tag: ""
   pullPolicy: IfNotPresent
@@ -121,7 +121,7 @@ prometheusRule:
   enabled: false
   additionalLabels: {}
   rules:
-    # kafka_controller_access_ready == 0: the last reconcile failed.
+    # kafka_access_controller_access_ready == 0: the last reconcile failed.
     notReady:
       enabled: true
       for: 15m

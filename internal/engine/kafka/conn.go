@@ -75,7 +75,7 @@ func clientOptions(ctx context.Context, c ConnConfig) ([]kgo.Opt, error) {
 	}
 	clientID := c.ClientID
 	if clientID == "" {
-		clientID = "kafka-controller"
+		clientID = "kafka-access-controller"
 	}
 	opts := []kgo.Opt{
 		kgo.SeedBrokers(c.Brokers...),

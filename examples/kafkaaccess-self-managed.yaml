@@ -1,6 +1,6 @@
 # A self-managed cluster: the controller connects with SCRAM and also writes
 # the service's own SCRAM password from a Secret.
-apiVersion: kafka-controller.io/v1alpha1
+apiVersion: kafka-access-controller.io/v1alpha1
 kind: KafkaAccess
 metadata:
   name: ledger

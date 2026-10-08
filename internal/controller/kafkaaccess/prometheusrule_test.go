@@ -20,7 +20,7 @@ func renderRules(t *testing.T, sets ...string) string {
 	if _, err := exec.LookPath("helm"); err != nil {
 		t.Skip("helm is not on PATH")
 	}
-	chart, err := filepath.Abs(filepath.Join("..", "..", "..", "charts", "kafka-controller"))
+	chart, err := filepath.Abs(filepath.Join("..", "..", "..", "charts", "kafka-access-controller"))
 	if err != nil {
 		t.Fatal(err)
 	}
