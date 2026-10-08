@@ -65,7 +65,7 @@ func (r *recorder) MustRegister(cs ...prometheus.Collector) {
 func (*recorder) Unregister(prometheus.Collector) bool { return true }
 
 // Every series an alert reads must be one the controller exports: the chart
-// was copied from database-controller, and a stale metric name makes an alert
+// was copied from database-access-controller, and a stale metric name makes an alert
 // that can never fire.
 func TestAlertsReadExportedSeries(t *testing.T) {
 	rules := renderRules(t, "prometheusRule.rules.notConverged.enabled=true")

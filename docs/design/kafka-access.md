@@ -9,7 +9,7 @@ local only, not yet run against a live MSK cluster
 
 Provision what a service needs **inside** a Kafka cluster -- its topics, the
 ACLs on them, its SCRAM credential -- with a controller, the way
-`database-controller` does for PostgreSQL. Creating the cluster is
+`database-access-controller` does for PostgreSQL. Creating the cluster is
 control-plane work that ACK or Crossplane already covers; this does not do it.
 
 Strimzi's `KafkaTopic` and `KafkaUser` cover the same ground only for clusters
@@ -104,7 +104,7 @@ read from Secrets in the resource's own namespace only (`k8s-controller-kit/secr
 
 ## Modes and deletion
 
-As `database-controller`: `mode: Observe` plans and reports without writing,
+As `database-access-controller`: `mode: Observe` plans and reports without writing,
 adding the finalizer, or revoking on delete. `revokeOnDelete` defaults to false
 and the finalizer exists only while it is true.
 
@@ -115,5 +115,5 @@ and the finalizer exists only while it is true.
   the ARN formats AWS documents, not against a cluster.
 - Watching password Secrets for immediate rotation.
 - Quotas, and delegation tokens.
-- Moving `database-controller` onto k8s-controller-kit (`v0.0.0` is
+- Moving `database-access-controller` onto k8s-controller-kit (`v0.0.0` is
   published, so nothing blocks it now).

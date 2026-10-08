@@ -53,7 +53,7 @@ real cluster; `kactl iam-policy` renders the IAM policy offline.
 See `docs/design/kafka-access.md` for the design and `examples/` for MSK IAM,
 MSK SCRAM and self-managed manifests. Built on
 [k8s-controller-kit](https://github.com/blairham/k8s-controller-kit), shared
-with [database-controller](https://github.com/blairham/database-controller).
+with [database-access-controller](https://github.com/blairham/database-access-controller).
 
 ## Install
 

@@ -8,7 +8,7 @@ other tools read this file directly.
 A Kubernetes controller that provisions the **data plane** of a Kafka cluster
 for a service: its topics, the ACLs on them, and its SCRAM credential. It works
 on MSK (IAM, SCRAM or mTLS) and on any cluster that speaks the Kafka admin API.
-The sibling of `database-controller`; both are built on `k8s-controller-kit`.
+The sibling of `database-access-controller`; both are built on `k8s-controller-kit`.
 
 - Module: `github.com/blairham/kafka-controller`
 - Go 1.26, `controller-runtime` v0.25, `franz-go` (kgo/kadm), `aws-sdk-go-v2`,
@@ -61,7 +61,7 @@ from the network and cannot see a sibling directory.
 
 Public at `github.com/blairham/kafka-controller` since 2026-10-06 (Apache-2.0
 with a CLA). `main` is guarded by repository ruleset 24595901, as
-database-controller's is: squash-only PRs, signed commits, linear history,
+database-access-controller's is: squash-only PRs, signed commits, linear history,
 stale reviews dismissed, resolved review threads, and every check below
 required on a branch up to date with `main`. Nobody bypasses it, admins
 included; a release's CHANGELOG and chart bump land as a PR too.
