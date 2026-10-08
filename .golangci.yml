@@ -210,7 +210,10 @@ formatters:
         - github.com/blairham/kafka-access-controller
 
     gofumpt:
-      extra-rules: true
+      extra:
+        group-params: true
+        clothe-returns: true
+        balance-calls: true
 
     gci:
       sections:
