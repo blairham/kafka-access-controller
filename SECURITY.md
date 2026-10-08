@@ -50,7 +50,7 @@ release, not to a key someone could leak.
 Verify the signature, then the archives against it:
 
 ```sh
-VERSION=v0.0.2
+VERSION=v0.0.3
 cosign verify-blob \
   --certificate-identity "https://github.com/blairham/kafka-access-controller/.github/workflows/goreleaser.yml@refs/tags/$VERSION" \
   --certificate-oidc-issuer https://token.actions.githubusercontent.com \
@@ -77,7 +77,7 @@ gh attestation verify kactl_Linux_x86_64.tar.gz --repo blairham/kafka-access-con
 **Images.** Each published image is signed by digest:
 
 ```sh
-cosign verify ghcr.io/blairham/kafka-access-controller:0.0.2 \
+cosign verify ghcr.io/blairham/kafka-access-controller:0.0.3 \
   --certificate-identity-regexp '^https://github\.com/blairham/kafka-access-controller/\.github/workflows/goreleaser\.yml@refs/tags/v' \
   --certificate-oidc-issuer https://token.actions.githubusercontent.com
 ```
@@ -87,7 +87,7 @@ repository's attestations. The subject is the multi-arch index, so check it
 by tag (image tags carry no `v`):
 
 ```sh
-gh attestation verify oci://ghcr.io/blairham/kafka-access-controller:0.0.2 \
+gh attestation verify oci://ghcr.io/blairham/kafka-access-controller:0.0.3 \
   --repo blairham/kafka-access-controller
 ```
 
@@ -95,7 +95,7 @@ gh attestation verify oci://ghcr.io/blairham/kafka-access-controller:0.0.2 \
 `chart.yml` and signed by digest the same way:
 
 ```sh
-cosign verify ghcr.io/blairham/charts/kafka-access-controller:0.0.2 \
+cosign verify ghcr.io/blairham/charts/kafka-access-controller:0.0.3 \
   --certificate-identity-regexp '^https://github\.com/blairham/kafka-access-controller/\.github/workflows/chart\.yml@' \
   --certificate-oidc-issuer https://token.actions.githubusercontent.com
 ```

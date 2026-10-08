@@ -2,8 +2,8 @@ apiVersion: v2
 name: kafka-access-controller
 description: Provisions topics, ACLs and SCRAM credentials on MSK and Apache Kafka
 type: application
-version: 0.0.2
-appVersion: "0.0.2"
+version: 0.0.3
+appVersion: "0.0.3"
 keywords:
   - kafka
   - msk
