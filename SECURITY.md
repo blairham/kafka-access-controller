@@ -91,6 +91,15 @@ gh attestation verify oci://ghcr.io/blairham/kafka-access-controller:0.0.2 \
   --repo blairham/kafka-access-controller
 ```
 
+**Helm chart.** The chart is published to `oci://ghcr.io/blairham/charts` by
+`chart.yml` and signed by digest the same way:
+
+```sh
+cosign verify ghcr.io/blairham/charts/kafka-access-controller:0.0.2 \
+  --certificate-identity-regexp '^https://github\.com/blairham/kafka-access-controller/\.github/workflows/chart\.yml@' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+```
+
 ## Reporting a vulnerability
 
 **Do not open a public issue.** Report it privately through GitHub:
