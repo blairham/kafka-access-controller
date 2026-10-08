@@ -36,7 +36,7 @@ Pre-stable releases (`v0.x.y`) make no API-stability promise -- breaking changes
 
 ### Added
 
-- The `KafkaAccess` API (`kafka-access-controller.io/v1alpha1`): one resource per
+- The `KafkaAccess` API (`kafka-controller.io/v1alpha1`): one resource per
   service declaring its cluster, principal, topics, consumer groups,
   transactional ids, idempotent write and SCRAM credential, with
   admission-time validation of every field.

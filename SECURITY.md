@@ -9,8 +9,8 @@ creates and deletes ACLs, and writes SCRAM credentials. Treat it accordingly:
 
 - **Whoever can create a `KafkaAccess` can ask for any ACL on any cluster the
   controller can reach**, for any principal they name. Grant `create` on
-  `kafkaaccesses.kafka-access-controller.io` as you would grant the admin principal
-  itself, and use `--watch-namespace` to confine it.
+  `kafkaaccesses.kafka-access-controller.io` as you would grant the admin
+  principal itself, and use `--watch-namespace` to confine it.
 - **Whoever can write a `KafkaAccess`'s status can make the controller delete
   ACLs.** `status.ownedACLs` is the inventory of ACLs the resource owns; one
   that the spec no longer declares is deleted, with the controller's
@@ -37,8 +37,8 @@ creates and deletes ACLs, and writes SCRAM credentials. Treat it accordingly:
 
 ## Supported versions
 
-kafka-access-controller is pre-stable (`v0.0.x`). Only the latest release receives
-fixes.
+kafka-access-controller is pre-stable (`v0.0.x`). Only the latest release
+receives fixes.
 
 ## Verifying a release
 

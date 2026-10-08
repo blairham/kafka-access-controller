@@ -41,7 +41,7 @@ internal/controller/kafkaaccess/ wiring onto k8s-controller-kit's reconciler
 cmd/manager/                     the controller binary (k8s-controller-kit/manager)
 cmd/kactl/                       plan, apply and iam-policy from a terminal
 config/crd/, config/rbac/        generated manifests -- never hand-edit
-charts/kafka-access-controller/         the Helm chart; the install path
+charts/kafka-access-controller/  the Helm chart; the install path
 hack/kafka-test/                 the integration broker
 docs/design/                     why the design is shaped this way
 ```
@@ -59,12 +59,13 @@ from the network and cannot see a sibling directory.
 
 ## Repository, CI and releases
 
-Public at `github.com/blairham/kafka-access-controller` since 2026-10-06 (Apache-2.0
-with a CLA). `main` is guarded by repository ruleset 24595901, as
-database-access-controller's is: squash-only PRs, signed commits, linear history,
-stale reviews dismissed, resolved review threads, and every check below
-required on a branch up to date with `main`. Nobody bypasses it, admins
-included; a release's CHANGELOG and chart bump land as a PR too.
+Public at `github.com/blairham/kafka-access-controller` since 2026-10-06
+(Apache-2.0 with a CLA), renamed from `kafka-controller` on 2026-10-08. `main`
+is guarded by repository ruleset 24595901, as database-access-controller's is:
+squash-only PRs, signed commits, linear history, stale reviews dismissed,
+resolved review threads, and every check below required on a branch up to date
+with `main`. Nobody bypasses it, admins included; a release's CHANGELOG and
+chart bump land as a PR too.
 
 - `.github/workflows/ci.yml` -- the required checks: **Pre-commit**,
   **Detect changed files** (skips code jobs for prose-only PRs without
@@ -76,13 +77,13 @@ included; a release's CHANGELOG and chart bump land as a PR too.
   Dependabot moves the pins, the Go modules (aws-sdk, Kubernetes and
   franz-go as groups) and the Dockerfile bases.
 - A **`v*` tag is what publishes**: `goreleaser.yml` runs GoReleaser, which
-  pushes `ghcr.io/blairham/kafka-access-controller:<version>` (amd64 and arm64) and
-  a `kactl` archive per platform, signed with keyless cosign, with SLSA
+  pushes `ghcr.io/blairham/kafka-access-controller:<version>` (amd64 and arm64)
+  and a `kactl` archive per platform, signed with keyless cosign, with SLSA
   provenance for the archives and the image. The notes are the tag's
   `CHANGELOG.md` section. The release refuses to publish when `Chart.yaml`'s
-  `appVersion` does not match the tag, or the CHANGELOG has no section for
-  it. Read `.claude/commands/release-tag.md` before cutting one; the first
-  tag is `v0.0.0`.
+  `appVersion` does not match the tag, or the CHANGELOG has no section for it.
+  Read `.claude/commands/release-tag.md` before cutting one; the first tag is
+  `v0.0.0`.
 - `osv-scanner.toml` ignores one advisory, with its reason; re-check it when
   the module graph changes.
 - `SECURITY.md` states what the controller can do with its admin principal
