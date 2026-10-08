@@ -13,6 +13,9 @@ on:
     - cron: '17 6 * * 1'
   push:
     branches: [main]
+  # A rename can make GitHub drop push events for a while, leaving the badge
+  # with no result under the new name until the weekly cron.
+  workflow_dispatch:
 
 permissions: read-all
 
