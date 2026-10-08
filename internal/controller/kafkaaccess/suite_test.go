@@ -32,7 +32,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	"sigs.k8s.io/controller-runtime/pkg/metrics/server"
 
-	kafkav1alpha1 "github.com/blairham/kafka-controller/apis/kafka/v1alpha1"
+	kafkav1alpha1 "github.com/blairham/kafka-access-controller/apis/kafka/v1alpha1"
 )
 
 var (

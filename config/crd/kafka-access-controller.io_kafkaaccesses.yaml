@@ -4,9 +4,9 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.22.0
-  name: kafkaaccesses.kafka-controller.io
+  name: kafkaaccesses.kafka-access-controller.io
 spec:
-  group: kafka-controller.io
+  group: kafka-access-controller.io
   names:
     kind: KafkaAccess
     listKind: KafkaAccessList

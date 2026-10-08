@@ -4,8 +4,8 @@
 set -euo pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-chart="$root/charts/kafka-controller/templates"
-crd_src="$root/config/crd/kafka-controller.io_kafkaaccesses.yaml"
+chart="$root/charts/kafka-access-controller/templates"
+crd_src="$root/config/crd/kafka-access-controller.io_kafkaaccesses.yaml"
 rbac_src="$root/config/rbac/role.yaml"
 
 banner='{{/*
@@ -45,9 +45,9 @@ banner='{{/*
   echo 'apiVersion: rbac.authorization.k8s.io/v1'
   echo 'kind: ClusterRole'
   echo 'metadata:'
-  echo '  name: {{ include "kafka-controller.fullname" . }}'
+  echo '  name: {{ include "kafka-access-controller.fullname" . }}'
   echo '  labels:'
-  echo '    {{- include "kafka-controller.labels" . | nindent 4 }}'
+  echo '    {{- include "kafka-access-controller.labels" . | nindent 4 }}'
   # Everything from `rules:` down is generated verbatim.
   sed -n '/^rules:/,$p' "$rbac_src"
   cat <<'YAML'
@@ -55,16 +55,16 @@ banner='{{/*
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ include "kafka-controller.fullname" . }}
+  name: {{ include "kafka-access-controller.fullname" . }}
   labels:
-    {{- include "kafka-controller.labels" . | nindent 4 }}
+    {{- include "kafka-access-controller.labels" . | nindent 4 }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: {{ include "kafka-controller.fullname" . }}
+  name: {{ include "kafka-access-controller.fullname" . }}
 subjects:
   - kind: ServiceAccount
-    name: {{ include "kafka-controller.serviceAccountName" . }}
+    name: {{ include "kafka-access-controller.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
 {{- if .Values.enableLeaderElection }}
 ---
@@ -76,10 +76,10 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: {{ include "kafka-controller.fullname" . }}-leader-election
+  name: {{ include "kafka-access-controller.fullname" . }}-leader-election
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "kafka-controller.labels" . | nindent 4 }}
+    {{- include "kafka-access-controller.labels" . | nindent 4 }}
 rules:
   - apiGroups:
       - coordination.k8s.io
@@ -95,17 +95,17 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ include "kafka-controller.fullname" . }}-leader-election
+  name: {{ include "kafka-access-controller.fullname" . }}-leader-election
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "kafka-controller.labels" . | nindent 4 }}
+    {{- include "kafka-access-controller.labels" . | nindent 4 }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: {{ include "kafka-controller.fullname" . }}-leader-election
+  name: {{ include "kafka-access-controller.fullname" . }}-leader-election
 subjects:
   - kind: ServiceAccount
-    name: {{ include "kafka-controller.serviceAccountName" . }}
+    name: {{ include "kafka-access-controller.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
 {{- end }}
 YAML

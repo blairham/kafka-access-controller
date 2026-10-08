@@ -12,7 +12,7 @@ project space.
 
 Report unacceptable behavior privately to the maintainer,
 [@blairham](https://github.com/blairham), via a
-[private security advisory](https://github.com/blairham/kafka-controller/security/advisories/new)
+[private security advisory](https://github.com/blairham/kafka-access-controller/security/advisories/new)
 if nothing else fits. Reports are handled confidentially.
 
 The maintainer may remove, edit or reject comments, commits, code, issues and

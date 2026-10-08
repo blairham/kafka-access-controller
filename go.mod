@@ -1,4 +1,4 @@
-module github.com/blairham/kafka-controller
+module github.com/blairham/kafka-access-controller
 
 go 1.26.8
 

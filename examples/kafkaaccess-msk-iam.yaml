@@ -1,7 +1,7 @@
 # A service on MSK using IAM access control. No ACLs are planned; the
 # controller manages the topic and writes the IAM policy the service's role
 # needs to status.iamPolicy (or: kactl iam-policy -f this-file).
-apiVersion: kafka-controller.io/v1alpha1
+apiVersion: kafka-access-controller.io/v1alpha1
 kind: KafkaAccess
 metadata:
   name: shipping

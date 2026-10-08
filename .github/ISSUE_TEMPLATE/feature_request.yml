@@ -1,5 +1,5 @@
 name: Feature request
-description: Something kafka-controller should provision or report
+description: Something kafka-access-controller should provision or report
 labels: [enhancement]
 body:
   - type: textarea

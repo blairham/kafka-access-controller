@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "kafka-controller.fullname" . }}
+  name: {{ include "kafka-access-controller.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "kafka-controller.labels" . | nindent 4 }}
+    {{- include "kafka-access-controller.labels" . | nindent 4 }}
   {{- with .Values.deploymentAnnotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -20,11 +20,11 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      {{- include "kafka-controller.selectorLabels" . | nindent 6 }}
+      {{- include "kafka-access-controller.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "kafka-controller.selectorLabels" . | nindent 8 }}
+        {{- include "kafka-access-controller.selectorLabels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -33,7 +33,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
     spec:
-      serviceAccountName: {{ include "kafka-controller.serviceAccountName" . }}
+      serviceAccountName: {{ include "kafka-access-controller.serviceAccountName" . }}
       {{- with .Values.runtimeClassName }}
       runtimeClassName: {{ . }}
       {{- end }}
@@ -111,7 +111,7 @@ spec:
         {{- toYaml .Values.affinity | nindent 8 }}
       {{- else if .Values.configureDefaultAffinity }}
       affinity:
-        {{- include "kafka-controller.defaultAffinity" . | nindent 8 }}
+        {{- include "kafka-access-controller.defaultAffinity" . | nindent 8 }}
       {{- end }}
       {{- with .Values.topologySpreadConstraints }}
       topologySpreadConstraints:

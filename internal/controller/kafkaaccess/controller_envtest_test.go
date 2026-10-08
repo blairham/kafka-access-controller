@@ -19,9 +19,9 @@ import (
 	"k8s.io/client-go/util/retry"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	kafkav1alpha1 "github.com/blairham/kafka-controller/apis/kafka/v1alpha1"
-	"github.com/blairham/kafka-controller/internal/engine/kafka"
-	"github.com/blairham/kafka-controller/internal/engine/kafka/kafkatest"
+	kafkav1alpha1 "github.com/blairham/kafka-access-controller/apis/kafka/v1alpha1"
+	"github.com/blairham/kafka-access-controller/internal/engine/kafka"
+	"github.com/blairham/kafka-access-controller/internal/engine/kafka/kafkatest"
 )
 
 const wait = 10 * time.Second

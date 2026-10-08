@@ -1,4 +1,4 @@
-# kafka-controller
+# kafka-access-controller
 
 Provisions the topics, ACLs and SCRAM credentials a service needs on MSK or
 any cluster that speaks the Kafka admin API.
@@ -6,8 +6,8 @@ any cluster that speaks the Kafka admin API.
 ## Install
 
 ```sh
-helm install kafka-controller charts/kafka-controller \
-  --namespace kafka-controller-system --create-namespace \
+helm install kafka-access-controller charts/kafka-access-controller \
+  --namespace kafka-access-controller-system --create-namespace \
   --set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"=arn:aws:iam::<acct>:role/<role>
 ```
 
@@ -20,7 +20,7 @@ ServiceAccount instead. For `msk-iam` admin auth the IAM role needs
 | Key | Default | Notes |
 |---|---|---|
 | `replicaCount` | `2` | Leader-elected, so the second is a standby |
-| `image.repository` | `ghcr.io/blairham/kafka-controller` | |
+| `image.repository` | `ghcr.io/blairham/kafka-access-controller` | |
 | `image.tag` | `""` | Falls back to `appVersion`; pin a digest where it matters |
 | `crds.install` | `true` | Installs the `KafkaAccess` CRD |
 | `crds.keep` | `true` | Keeps the CRD on uninstall |
@@ -32,9 +32,9 @@ ServiceAccount instead. For `msk-iam` admin auth the IAM role needs
 | `configureDefaultAffinity` | `true` | Soft anti-affinity across nodes |
 | `metrics.serviceMonitor.enabled` | `false` | Needs the Prometheus operator CRDs |
 | `prometheusRule.enabled` | `false` | Alerts on the per-resource metrics; needs the Prometheus operator CRDs |
-| `prometheusRule.rules.notReady` | `for: 15m`, `critical` | `kafka_controller_access_ready == 0` |
+| `prometheusRule.rules.notReady` | `for: 15m`, `critical` | `kafka_access_controller_access_ready == 0` |
 | `prometheusRule.rules.stale` | `7200s`, `for: 10m`, `warning` | Not planned against the cluster in two drift intervals (either mode) |
-| `prometheusRule.rules.notConverged` | off; `for: 2h`, `warning` | `kafka_controller_access_pending_operations > 0` |
+| `prometheusRule.rules.notConverged` | off; `for: 2h`, `warning` | `kafka_access_controller_access_pending_operations > 0` |
 | `autoscaling.enabled` | `false` | Leave off: only the leader reconciles |
 
 ### The CRD is in `templates/`, not `crds/`

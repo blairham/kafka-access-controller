@@ -13,7 +13,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/blairham/kafka-controller/internal/engine/kafka"
+	"github.com/blairham/kafka-access-controller/internal/engine/kafka"
 )
 
 // Each ACL operation's IAM equivalent, including the Describe action the data

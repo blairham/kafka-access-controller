@@ -11,7 +11,7 @@ import (
 	"slices"
 	"sync"
 
-	"github.com/blairham/kafka-controller/internal/engine/kafka"
+	"github.com/blairham/kafka-access-controller/internal/engine/kafka"
 )
 
 // Admin is an in-memory cluster implementing kafka.Admin. Fields are

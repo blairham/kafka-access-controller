@@ -16,14 +16,14 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	kafkav1alpha1 "github.com/blairham/kafka-controller/apis/kafka/v1alpha1"
-	"github.com/blairham/kafka-controller/internal/engine/kafka"
-	"github.com/blairham/kafka-controller/internal/mskiam"
+	kafkav1alpha1 "github.com/blairham/kafka-access-controller/apis/kafka/v1alpha1"
+	"github.com/blairham/kafka-access-controller/internal/engine/kafka"
+	"github.com/blairham/kafka-access-controller/internal/mskiam"
 )
 
 // finalizer keeps the resource around long enough to revoke, and is only
 // added when the spec asks for revocation.
-const finalizer = "kafka-controller.io/revoke-on-delete"
+const finalizer = "kafka-access-controller.io/revoke-on-delete"
 
 // Condition types, re-exported for callers that only import this package.
 const (
@@ -31,9 +31,9 @@ const (
 	ConditionConverged = reconciler.ConditionConverged
 )
 
-// +kubebuilder:rbac:groups=kafka-controller.io,resources=kafkaaccesses,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=kafka-controller.io,resources=kafkaaccesses/status,verbs=get;update;patch
-// +kubebuilder:rbac:groups=kafka-controller.io,resources=kafkaaccesses/finalizers,verbs=update
+// +kubebuilder:rbac:groups=kafka-access-controller.io,resources=kafkaaccesses,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=kafka-access-controller.io,resources=kafkaaccesses/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=kafka-access-controller.io,resources=kafkaaccesses/finalizers,verbs=update
 // +kubebuilder:rbac:groups="",resources=events,verbs=create;patch
 // +kubebuilder:rbac:groups="",resources=secrets,verbs=get;list;watch
 
@@ -93,7 +93,7 @@ func New(cfg Config) *reconciler.Reconciler[*kafkav1alpha1.KafkaAccess] {
 	var metrics *reconciler.Metrics
 	if cfg.Registry != nil {
 		metrics = reconciler.NewMetrics(cfg.Registry, reconciler.MetricsConfig{
-			Prefix: "kafka_controller", Kind: "KafkaAccess", Noun: "operation",
+			Prefix: "kafka_access_controller", Kind: "KafkaAccess", Noun: "operation",
 		})
 	}
 	return &reconciler.Reconciler[*kafkav1alpha1.KafkaAccess]{

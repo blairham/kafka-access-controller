@@ -1,16 +1,16 @@
 # Security Policy
 
-## What kafka-controller can do
+## What kafka-access-controller can do
 
-kafka-controller connects to a Kafka cluster as an **administrative
+kafka-access-controller connects to a Kafka cluster as an **administrative
 principal** (`spec.cluster.auth`) and, on behalf of every `KafkaAccess` in
 the Kubernetes cluster, creates topics, grows partitions, sets topic configs,
 creates and deletes ACLs, and writes SCRAM credentials. Treat it accordingly:
 
 - **Whoever can create a `KafkaAccess` can ask for any ACL on any cluster the
   controller can reach**, for any principal they name. Grant `create` on
-  `kafkaaccesses.kafka-controller.io` as you would grant the admin principal
-  itself, and use `--watch-namespace` to confine it.
+  `kafkaaccesses.kafka-access-controller.io` as you would grant the admin
+  principal itself, and use `--watch-namespace` to confine it.
 - **Whoever can write a `KafkaAccess`'s status can make the controller delete
   ACLs.** `status.ownedACLs` is the inventory of ACLs the resource owns; one
   that the spec no longer declares is deleted, with the controller's
@@ -37,8 +37,8 @@ creates and deletes ACLs, and writes SCRAM credentials. Treat it accordingly:
 
 ## Supported versions
 
-kafka-controller is pre-stable (`v0.0.x`). Only the latest release receives
-fixes.
+kafka-access-controller is pre-stable (`v0.0.x`). Only the latest release
+receives fixes.
 
 ## Verifying a release
 
@@ -52,7 +52,7 @@ Verify the signature, then the archives against it:
 ```sh
 VERSION=v0.0.1
 cosign verify-blob \
-  --certificate-identity "https://github.com/blairham/kafka-controller/.github/workflows/goreleaser.yml@refs/tags/$VERSION" \
+  --certificate-identity "https://github.com/blairham/kafka-access-controller/.github/workflows/goreleaser.yml@refs/tags/$VERSION" \
   --certificate-oidc-issuer https://token.actions.githubusercontent.com \
   --bundle checksums.txt.sigstore.json checksums.txt
 sha256sum --check --ignore-missing checksums.txt
@@ -63,22 +63,22 @@ sha256sum --check --ignore-missing checksums.txt
 in the release workflow and stored in the repository's attestations:
 
 ```sh
-gh attestation verify kactl_Linux_x86_64.tar.gz --repo blairham/kafka-controller
+gh attestation verify kactl_Linux_x86_64.tar.gz --repo blairham/kafka-access-controller
 ```
 
 The same bundle is attached to the release as
-`kafka-controller-$VERSION.intoto.jsonl`, for checking offline:
+`kafka-access-controller-$VERSION.intoto.jsonl`, for checking offline:
 
 ```sh
-gh attestation verify kactl_Linux_x86_64.tar.gz --repo blairham/kafka-controller \
-  --bundle "kafka-controller-$VERSION.intoto.jsonl"
+gh attestation verify kactl_Linux_x86_64.tar.gz --repo blairham/kafka-access-controller \
+  --bundle "kafka-access-controller-$VERSION.intoto.jsonl"
 ```
 
 **Images.** Each published image is signed by digest:
 
 ```sh
-cosign verify ghcr.io/blairham/kafka-controller:0.0.1 \
-  --certificate-identity-regexp '^https://github\.com/blairham/kafka-controller/\.github/workflows/goreleaser\.yml@refs/tags/v' \
+cosign verify ghcr.io/blairham/kafka-access-controller:0.0.1 \
+  --certificate-identity-regexp '^https://github\.com/blairham/kafka-access-controller/\.github/workflows/goreleaser\.yml@refs/tags/v' \
   --certificate-oidc-issuer https://token.actions.githubusercontent.com
 ```
 
@@ -87,14 +87,14 @@ repository's attestations. The subject is the multi-arch index, so check it
 by tag (image tags carry no `v`):
 
 ```sh
-gh attestation verify oci://ghcr.io/blairham/kafka-controller:0.0.1 \
-  --repo blairham/kafka-controller
+gh attestation verify oci://ghcr.io/blairham/kafka-access-controller:0.0.1 \
+  --repo blairham/kafka-access-controller
 ```
 
 ## Reporting a vulnerability
 
 **Do not open a public issue.** Report it privately through GitHub:
-[Security → Report a vulnerability](https://github.com/blairham/kafka-controller/security/advisories/new).
+[Security → Report a vulnerability](https://github.com/blairham/kafka-access-controller/security/advisories/new).
 
 Please include the affected version or commit, what an attacker can do, and
 the steps to reproduce. You should receive a response within a week.

@@ -15,8 +15,8 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/metrics"
 
-	kafkav1alpha1 "github.com/blairham/kafka-controller/apis/kafka/v1alpha1"
-	"github.com/blairham/kafka-controller/internal/controller/kafkaaccess"
+	kafkav1alpha1 "github.com/blairham/kafka-access-controller/apis/kafka/v1alpha1"
+	"github.com/blairham/kafka-access-controller/internal/controller/kafkaaccess"
 )
 
 func main() {
@@ -26,7 +26,7 @@ func main() {
 
 	err := manager.Main(manager.Config{
 		Scheme:           scheme,
-		LeaderElectionID: "kafka-controller.io",
+		LeaderElectionID: "kafka-access-controller.io",
 		Controllers: map[string]manager.Controller{
 			"kafkaaccess": {
 				Watches: &kafkav1alpha1.KafkaAccess{},

@@ -1,6 +1,6 @@
 # A service on MSK, authorized with ACLs. The controller connects with MSK IAM
 # (its pod's role); the service authenticates with SCRAM, so its ACLs apply.
-apiVersion: kafka-controller.io/v1alpha1
+apiVersion: kafka-access-controller.io/v1alpha1
 kind: KafkaAccess
 metadata:
   name: orders

@@ -8,8 +8,8 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/blairham/kafka-controller/internal/engine/kafka"
-	"github.com/blairham/kafka-controller/internal/engine/kafka/kafkatest"
+	"github.com/blairham/kafka-access-controller/internal/engine/kafka"
+	"github.com/blairham/kafka-access-controller/internal/engine/kafka/kafkatest"
 )
 
 func TestACLKeyRoundTrips(t *testing.T) {

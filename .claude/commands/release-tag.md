@@ -4,7 +4,7 @@ argument-hint: "<version, e.g. v0.0.1>"
 allowed-tools: Bash(make:*), Bash(go test:*), Bash(go vet:*), Bash(go build:*), Read, Edit, Glob, Grep
 ---
 
-Cut a kafka-controller release. Pushing a `v*` tag runs
+Cut a kafka-access-controller release. Pushing a `v*` tag runs
 `.github/workflows/goreleaser.yml`, which publishes the multi-arch image to
 ghcr.io, the `kactl` archives, a cosign-signed `checksums.txt`, a signed
 image and SLSA provenance for both, with the tag's CHANGELOG section as the
@@ -23,7 +23,7 @@ Steps:
 4. In one change: move CHANGELOG.md's Unreleased entries under
    `## [X.Y.Z] - YYYY-MM-DD` (no `v`; the workflow matches that exact shape)
    and leave a fresh Unreleased section; set `version` and `appVersion` in
-   `charts/kafka-controller/Chart.yaml` to `X.Y.Z`.
+   `charts/kafka-access-controller/Chart.yaml` to `X.Y.Z`.
 5. STOP and show the user the diff and the exact commands before anything
    that mutates the remote. `main` is protected, so the change lands as a
    `Release $1` PR (squash-merged once CI is green); then
@@ -31,5 +31,5 @@ Steps:
    `git push origin $1`. Do not push tags without explicit confirmation.
 6. Watch the Release workflow, and check the release carries the `kactl_*`
    archives, `checksums.txt`, `checksums.txt.sigstore.json` and
-   `kafka-controller-$1.intoto.jsonl`, and that
-   `ghcr.io/blairham/kafka-controller:X.Y.Z` is signed (SECURITY.md).
+   `kafka-access-controller-$1.intoto.jsonl`, and that
+   `ghcr.io/blairham/kafka-access-controller:X.Y.Z` is signed (SECURITY.md).

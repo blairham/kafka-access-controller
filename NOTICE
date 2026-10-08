@@ -1,4 +1,4 @@
-kafka-controller — provisions topics, ACLs and SCRAM credentials on MSK and Apache Kafka
+kafka-access-controller — provisions topics, ACLs and SCRAM credentials on MSK and Apache Kafka
 Copyright 2026 Blair Hamilton
 
 This product is licensed under the Apache License, Version 2.0.
