@@ -8,6 +8,24 @@ Pre-stable releases (`v0.x.y`) make no API-stability promise -- breaking changes
 
 ## [Unreleased]
 
+## [0.0.3] - 2026-10-08
+
+The first complete release under the `kafka-access-controller` name; 0.0.2
+published only its image.
+
+### Added
+
+- The Helm chart is published to `oci://ghcr.io/blairham/charts` on every
+  release, signed by digest with keyless cosign like the image, so a pinned
+  version installs without cloning the repository.
+
+### Fixed
+
+- The release workflow creates the GitHub release again. It named the
+  release's commit, which GitHub refuses to `GITHUB_TOKEN` when the release
+  range changes workflow files; the tag already exists, so it is no longer
+  named.
+
 ## [0.0.2] - 2026-10-08
 
 Published as the image `ghcr.io/blairham/kafka-access-controller:0.0.2`
