@@ -8,6 +8,8 @@ Pre-stable releases (`v0.x.y`) make no API-stability promise -- breaking changes
 
 ## [Unreleased]
 
+## [0.0.2] - 2026-10-08
+
 ### Changed
 
 - **Breaking:** renamed to `kafka-access-controller`, after the one thing it
