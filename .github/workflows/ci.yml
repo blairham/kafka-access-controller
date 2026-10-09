@@ -4,9 +4,10 @@ name: CI
 # test and Fuzz are blairham/.github's go-ci.yml, and the Dockerfile check is
 # its go-image.yml; their checks report as `CI / <job>` and
 # `Image / Build image`. The jobs below are this repository's own: they
-# `needs: ci` and gate their steps on `needs.ci.outputs.code == 'true'`
-# (never a job-level `if:` or a `paths:` filter: a required check that never
-# runs is pending forever).
+# `needs: changes` (go-changes.yml, so they need not wait for all of go-ci)
+# and gate their steps on `needs.changes.outputs.code == 'true'` (never a
+# job-level `if:` or a `paths:` filter: a required check that never runs is
+# pending forever).
 on:
   pull_request:
     types: [opened, reopened, synchronize, ready_for_review]
@@ -28,7 +29,7 @@ concurrency:
 jobs:
   ci:
     name: CI
-    uses: blairham/.github/.github/workflows/go-ci.yml@99060d62d0693570a360127ab698307d276630da # v0.0.0
+    uses: blairham/.github/.github/workflows/go-ci.yml@48d6c8f94aa8381c550818e0a0b2a0d61f280a6b # v0.0.2
     with:
       # Both binaries, the generated files current, and vet under every build
       # tag, so the envtest and integration files compile too.
@@ -38,43 +39,47 @@ jobs:
       # envtest downloads a kube-apiserver and etcd; no cluster, no Docker.
       test-command: go test -race ./... && make test-envtest
 
+  changes:
+    name: Changes
+    uses: blairham/.github/.github/workflows/go-changes.yml@48d6c8f94aa8381c550818e0a0b2a0d61f280a6b # v0.0.2
+
   # Build only; a v* tag publishes (release.yml).
   image:
     name: Image
-    needs: ci
-    uses: blairham/.github/.github/workflows/go-image.yml@99060d62d0693570a360127ab698307d276630da # v0.0.0
+    needs: changes
+    uses: blairham/.github/.github/workflows/go-image.yml@48d6c8f94aa8381c550818e0a0b2a0d61f280a6b # v0.0.2
     with:
-      run: ${{ needs.ci.outputs.code == 'true' }}
+      run: ${{ needs.changes.outputs.code == 'true' }}
 
   # The engine against a real broker: KRaft, the standard authorizer and a
   # SCRAM listener, started by the same script as `make kafka-up`.
   integration:
     name: Kafka integration
-    needs: ci
+    needs: changes
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        if: needs.ci.outputs.code == 'true'
+        if: needs.changes.outputs.code == 'true'
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-        if: needs.ci.outputs.code == 'true'
+        if: needs.changes.outputs.code == 'true'
         with:
           go-version-file: go.mod
           check-latest: true
           cache: true
       - name: Run the engine against Apache Kafka
-        if: needs.ci.outputs.code == 'true'
+        if: needs.changes.outputs.code == 'true'
         run: make test-integration
 
   # Lints the chart and renders it with each toggle flipped.
   charts:
     name: Helm chart
-    needs: ci
+    needs: changes
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        if: needs.ci.outputs.code == 'true'
+        if: needs.changes.outputs.code == 'true'
       - uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1
-        if: needs.ci.outputs.code == 'true'
+        if: needs.changes.outputs.code == 'true'
       - name: Lint and render
-        if: needs.ci.outputs.code == 'true'
+        if: needs.changes.outputs.code == 'true'
         run: make helm-lint
