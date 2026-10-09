@@ -67,24 +67,38 @@ resolved review threads, and every check below required on a branch up to date
 with `main`. Nobody bypasses it, admins included; a release's CHANGELOG and
 chart bump land as a PR too.
 
-- `.github/workflows/ci.yml` -- the required checks: **Pre-commit**,
-  **Detect changed files** (skips code jobs for prose-only PRs without
-  leaving a check pending), **Build and test** (build, `check-generated`, vet
-  with all build tags, `go test -race`, envtest), **Kafka integration**
-  (`make test-integration`: the same broker script as local), **Build image**
-  and **Helm chart**. `codeql.yml` (security-extended) and `scorecard.yml` run
-  alongside. Every action is pinned by commit SHA with a `# vX.Y.Z` comment;
-  Dependabot moves the pins, the Go modules (aws-sdk, Kubernetes and
-  franz-go as groups) and the Dockerfile bases.
-- A **`v*` tag is what publishes**: `goreleaser.yml` runs GoReleaser, which
-  pushes `ghcr.io/blairham/kafka-access-controller:<version>` (amd64 and arm64)
-  and a `kactl` archive per platform, signed with keyless cosign, with SLSA
+- **Shared baseline.** CI, release and the synced config files come from
+  [blairham/.github](https://github.com/blairham/.github), pinned by commit
+  SHA. `.golangci.yml`, `.editorconfig`, `.pre-commit-config.yaml`,
+  `.yamllint.yml`, `.gitleaks.toml`, `.github/dependabot.yml`,
+  `.github/CODEOWNERS`, `scorecard.yml` and `codeql.yml` are rendered there
+  by `make sync REPO=kafka-access-controller DIR=<checkout>`: change them in
+  blairham/.github (this repository's approved departure, fieldalignment off
+  under `apis/`, is `overrides/kafka-access-controller.yml` there), not here,
+  or the weekly drift check reports it.
+- `.github/workflows/ci.yml` -- the required checks: **CI / Pre-commit**,
+  **CI / Detect changed files** (skips code jobs for prose-only PRs without
+  leaving a check pending) and **CI / Build and test (ubuntu-latest)** (build,
+  `check-generated`, vet with all build tags, `go test -race`, envtest), all
+  from `go-ci.yml`, which also fuzzes on main and weekly; **Image / Build
+  image** (`go-image.yml`, build only); and this repository's own **Kafka
+  integration** (`make test-integration`: the same broker script as local)
+  and **Helm chart**. `codeql.yml` (security-extended, required as
+  **Analyze**) and `scorecard.yml` run alongside. Every action is pinned by
+  commit SHA with a `# vX.Y.Z` comment; Dependabot moves the pins, the Go
+  modules (aws-sdk, Kubernetes and franz-go as groups) and the Dockerfile
+  bases.
+- A **`v*` tag is what publishes**: `release.yml` calls `go-release.yml`,
+  which runs GoReleaser to push
+  `ghcr.io/blairham/kafka-access-controller:<version>` (amd64 and arm64) and
+  a `kactl` archive per platform, signed with keyless cosign, with SLSA
   provenance for the archives and the image. The notes are the tag's
   `CHANGELOG.md` section. The release refuses to publish when `Chart.yaml`'s
   `appVersion` does not match the tag, or the CHANGELOG has no section for it.
-  Read `.claude/commands/release-tag.md` before cutting one; the first tag is
-  `v0.0.0`.
-- The same tag runs `chart.yml`, which pushes the chart to
+  `gh workflow run release.yml -f dry-run=true` builds it all as a snapshot
+  and publishes nothing. Read `.claude/commands/release-tag.md` before
+  cutting one.
+- The same tag runs `chart.yml` (`go-chart.yml`), which pushes the chart to
   `oci://ghcr.io/blairham/charts/kafka-access-controller:<version>` and signs
   it; it refuses unless both `version` and `appVersion` match the tag. It is
   its own workflow so an existing tag can be published alone:

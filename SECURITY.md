@@ -44,16 +44,23 @@ receives fixes.
 
 Releases are signed with [cosign](https://github.com/sigstore/cosign) keyless
 signing: the signature is tied to the GitHub Actions workflow that built the
-release, not to a key someone could leak.
+release, not to a key someone could leak. `.github/workflows/release.yml` and
+`chart.yml` run the shared workflows in
+[blairham/.github](https://github.com/blairham/.github)
+(`.github/workflows/go-release.yml` and `go-chart.yml`), so the signing
+identity is that shared workflow; the certificate also names this repository
+and the tag.
 
 **Downloads.** `checksums.txt` is signed; it lists the digest of every archive.
 Verify the signature, then the archives against it:
 
 ```sh
-VERSION=v0.0.3
+VERSION=v0.0.4
 cosign verify-blob \
-  --certificate-identity "https://github.com/blairham/kafka-access-controller/.github/workflows/goreleaser.yml@refs/tags/$VERSION" \
+  --certificate-identity-regexp '^https://github\.com/blairham/\.github/\.github/workflows/go-release\.yml@' \
   --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+  --certificate-github-workflow-repository blairham/kafka-access-controller \
+  --certificate-github-workflow-ref "refs/tags/$VERSION" \
   --bundle checksums.txt.sigstore.json checksums.txt
 sha256sum --check --ignore-missing checksums.txt
 ```
@@ -63,7 +70,8 @@ sha256sum --check --ignore-missing checksums.txt
 in the release workflow and stored in the repository's attestations:
 
 ```sh
-gh attestation verify kactl_Linux_x86_64.tar.gz --repo blairham/kafka-access-controller
+gh attestation verify kactl_Linux_x86_64.tar.gz --repo blairham/kafka-access-controller \
+  --signer-workflow blairham/.github/.github/workflows/go-release.yml
 ```
 
 The same bundle is attached to the release as
@@ -71,15 +79,17 @@ The same bundle is attached to the release as
 
 ```sh
 gh attestation verify kactl_Linux_x86_64.tar.gz --repo blairham/kafka-access-controller \
-  --bundle "kafka-access-controller-$VERSION.intoto.jsonl"
+  --bundle "kafka-access-controller-$VERSION.intoto.jsonl" \
+  --signer-workflow blairham/.github/.github/workflows/go-release.yml
 ```
 
 **Images.** Each published image is signed by digest:
 
 ```sh
-cosign verify ghcr.io/blairham/kafka-access-controller:0.0.3 \
-  --certificate-identity-regexp '^https://github\.com/blairham/kafka-access-controller/\.github/workflows/goreleaser\.yml@refs/tags/v' \
-  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+cosign verify ghcr.io/blairham/kafka-access-controller:0.0.4 \
+  --certificate-identity-regexp '^https://github\.com/blairham/\.github/\.github/workflows/go-release\.yml@' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+  --certificate-github-workflow-repository blairham/kafka-access-controller
 ```
 
 and carries SLSA build provenance, stored in ghcr.io beside it and in the
@@ -87,18 +97,28 @@ repository's attestations. The subject is the multi-arch index, so check it
 by tag (image tags carry no `v`):
 
 ```sh
-gh attestation verify oci://ghcr.io/blairham/kafka-access-controller:0.0.3 \
-  --repo blairham/kafka-access-controller
+gh attestation verify oci://ghcr.io/blairham/kafka-access-controller:0.0.4 \
+  --repo blairham/kafka-access-controller \
+  --signer-workflow blairham/.github/.github/workflows/go-release.yml
 ```
 
 **Helm chart.** The chart is published to `oci://ghcr.io/blairham/charts` by
-`chart.yml` and signed by digest the same way:
+`chart.yml` (blairham/.github's `go-chart.yml`) and signed by digest the
+same way:
 
 ```sh
-cosign verify ghcr.io/blairham/charts/kafka-access-controller:0.0.3 \
-  --certificate-identity-regexp '^https://github\.com/blairham/kafka-access-controller/\.github/workflows/chart\.yml@' \
-  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+cosign verify ghcr.io/blairham/charts/kafka-access-controller:0.0.4 \
+  --certificate-identity-regexp '^https://github\.com/blairham/\.github/\.github/workflows/go-chart\.yml@' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+  --certificate-github-workflow-repository blairham/kafka-access-controller
 ```
+
+**Tags released before the move to blairham/.github** (v0.0.3 and earlier)
+were signed by this repository's own workflows. Verify those with
+`--certificate-identity "https://github.com/blairham/kafka-access-controller/.github/workflows/goreleaser.yml@refs/tags/$VERSION"`
+(images: `--certificate-identity-regexp '^https://github\.com/blairham/kafka-access-controller/\.github/workflows/goreleaser\.yml@refs/tags/v'`;
+the chart: `.../workflows/chart\.yml@`) in place of the identity flags
+above, and without `--signer-workflow`.
 
 ## Reporting a vulnerability
 
