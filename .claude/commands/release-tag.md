@@ -5,8 +5,8 @@ allowed-tools: Bash(make:*), Bash(go test:*), Bash(go vet:*), Bash(go build:*), 
 ---
 
 Cut a kafka-access-controller release. Pushing a `v*` tag runs
-`.github/workflows/goreleaser.yml`, which publishes the multi-arch image to
-ghcr.io, the `kactl` archives, a cosign-signed `checksums.txt`, a signed
+`.github/workflows/release.yml` (blairham/.github's `go-release.yml`), which
+publishes the multi-arch image to ghcr.io, the `kactl` archives, a cosign-signed `checksums.txt`, a signed
 image and SLSA provenance for both, with the tag's CHANGELOG section as the
 notes. It fails if that section is missing, or if the chart's `appVersion`
 does not match the tag. Target version: `$1` (must be `v0.0.x`, pre-stable;

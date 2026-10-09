@@ -1,7 +1,3 @@
-# Every change needs the maintainer's review. internal/engine/ is where a CRD
-# field becomes ACLs, topic changes and SCRAM credentials written with the
-# admin principal, over a connection whose TLS and SASL it sets up;
-# internal/mskiam/ renders the IAM policy a service is told to attach.
-*                 @blairham
-/internal/engine/ @blairham
-/internal/mskiam/ @blairham
+# Every change needs the maintainer's review.
+# Rendered from blairham/.github baseline/CODEOWNERS.tmpl by `make sync`.
+*  @blairham

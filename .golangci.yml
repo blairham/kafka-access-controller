@@ -1,6 +1,11 @@
 # golangci-lint v2 configuration for kafka-access-controller.
 # See: https://golangci-lint.run/usage/configuration/
 #
+# Rendered from blairham/.github baseline/golangci.yml.tmpl by `make sync`.
+# Edit the baseline (or, with a reason, the override file
+# overrides/kafka-access-controller.yml), not this file: the weekly drift check
+# reports any difference.
+#
 # golangci-lint is pinned twice and the two must move together: go.mod's `tool`
 # block (`go tool golangci-lint`) and the hook `rev` in .pre-commit-config.yaml.
 
@@ -27,7 +32,7 @@ linters:
   enable:
     # Core linters (enabled by default)
     - errcheck # Check for unchecked errors
-    - govet # Suspicious constructs, incl. shadow + fieldalignment (see settings)
+    - govet # Suspicious constructs; the analyzers are in settings
     - ineffassign # Detect ineffectual assignments
     - staticcheck # The staticcheck rule set
     - unused # Check for unused constants, variables, functions and types
@@ -83,15 +88,6 @@ linters:
 
   exclusions:
     rules:
-      # In kubebuilder API types the field comments ARE the CRD: descriptions,
-      # defaults, enums, patterns, MaxItems. fieldalignment's fix reorders the
-      # fields and drops those comments, which silently strips the schema's
-      # validation, and the hook runs with --fix. Field order is irrelevant to
-      # the CRD, so alignment is not worth that here.
-      - path: ^apis/
-        linters:
-          - govet
-        text: fieldalignment
       # Exclude test files from strict checks
       - path: _test\.go
         linters:
@@ -110,6 +106,15 @@ linters:
         linters:
           - gocritic
         text: "initClause"
+
+      # In kubebuilder API types the field comments ARE the CRD: descriptions,
+      # defaults, enums, patterns, MaxItems. fieldalignment's fix reorders the
+      # fields and drops those comments, silently stripping the schema's
+      # validation, and the hook runs with --fix.
+      - path: ^apis/
+        linters:
+          - govet
+        text: fieldalignment
 
   settings:
     misspell:

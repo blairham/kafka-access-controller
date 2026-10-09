@@ -8,6 +8,14 @@ Pre-stable releases (`v0.x.y`) make no API-stability promise -- breaking changes
 
 ## [Unreleased]
 
+### Changed
+
+- Releases, the image and the chart are now built, signed and attested by
+  the shared workflows in [blairham/.github](https://github.com/blairham/.github)
+  (`go-release.yml`, `go-chart.yml`), so the keyless signing identity is that
+  workflow rather than this repository's own; SECURITY.md has the new verify
+  commands and how to verify 0.0.3 and earlier.
+
 ## [0.0.3] - 2026-10-08
 
 The first complete release under the `kafka-access-controller` name; 0.0.2
