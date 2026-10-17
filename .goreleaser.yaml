@@ -20,21 +20,6 @@ builds:
       - -trimpath
     ldflags:
       - -s -w
-  # The image's /bin/sh: blairham/sh's gated shell. Image only, in no archive.
-  - id: sh
-    binary: sh
-    main: ./cmd/sh
-    env:
-      - CGO_ENABLED=0
-    goos:
-      - linux
-    goarch:
-      - amd64
-      - arm64
-    flags:
-      - -trimpath
-    ldflags:
-      - -s -w
   # kactl plans, applies and renders IAM policies from a terminal, so it
   # ships for laptops too.
   - id: kactl
@@ -85,7 +70,6 @@ dockers_v2:
     ids:
       - manager
       - kactl
-      - sh
     images:
       - ghcr.io/blairham/kafka-access-controller
     dockerfile: Dockerfile

@@ -8,13 +8,6 @@ Pre-stable releases (`v0.x.y`) make no API-stability promise -- breaking changes
 
 ## [Unreleased]
 
-### Added
-
-- The image's `/bin/sh` is blairham/sh's
-  [gated shell](https://github.com/blairham/sh/blob/main/gated/README.md), so
-  `kubectl exec <pod> -- /bin/sh -c '...'` can read `/proc` and
-  `/sys/fs/cgroup`. It cannot exec, signal or write.
-
 ### Changed
 
 - Releases, the image and the chart are now built, signed and attested by
