@@ -40,6 +40,7 @@ internal/mskiam/                 the IAM policy a service needs under MSK IAM
 internal/controller/kafkaaccess/ wiring onto k8s-controller-kit's reconciler
 cmd/manager/                     the controller binary (k8s-controller-kit/manager)
 cmd/kactl/                       plan, apply and iam-policy from a terminal
+cmd/sh/                          the image's /bin/sh: blairham/sh's gated shell
 config/crd/, config/rbac/        generated manifests -- never hand-edit
 charts/kafka-access-controller/  the Helm chart; the install path
 hack/kafka-test/                 the integration broker
