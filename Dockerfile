@@ -1,5 +1,7 @@
 # kafka-access-controller: the manager and kactl in one distroless, static, non-root
-# image. Base images are pinned by digest and pulled from AWS's public mirror of
+# image, with blairham/sh's gated shell at /bin/sh (cmd/sh: it cannot exec,
+# signal or write, and is safe only because the image has no other userland).
+# Base images are pinned by digest and pulled from AWS's public mirror of
 # Docker Hub (no anonymous rate limits). The build cross-compiles rather than
 # emulating the target.
 FROM --platform=$BUILDPLATFORM public.ecr.aws/docker/library/golang:1.26-alpine@sha256:c95332c2af86b6d89b91bd0500f4b9529ccbd090a0d1855c6d1ceaa142ae8615 AS build
@@ -12,7 +14,9 @@ RUN --mount=type=cache,target=/go/pkg/mod \
     CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH \
     go build -trimpath -ldflags="-s -w" -o /out/manager ./cmd/manager && \
     CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH \
-    go build -trimpath -ldflags="-s -w" -o /out/kactl ./cmd/kactl
+    go build -trimpath -ldflags="-s -w" -o /out/kactl ./cmd/kactl && \
+    CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH \
+    go build -trimpath -ldflags="-s -w" -o /out/sh ./cmd/sh
 
 # The distroless `nonroot` variant runs as uid 65532 and carries system CAs.
 FROM gcr.io/distroless/static-debian12:nonroot@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab AS runtime
@@ -29,8 +33,10 @@ FROM runtime AS release
 ARG TARGETOS TARGETARCH
 COPY ${TARGETOS}/${TARGETARCH}/manager /manager
 COPY ${TARGETOS}/${TARGETARCH}/kactl /kactl
+COPY ${TARGETOS}/${TARGETARCH}/sh /bin/sh
 
 # Default (last, so a bare `docker build .` gets it): built from source.
 FROM runtime
 COPY --from=build /out/manager /manager
 COPY --from=build /out/kactl /kactl
+COPY --from=build /out/sh /bin/sh

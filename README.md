@@ -71,6 +71,21 @@ See [the chart README](charts/kafka-access-controller/README.md) for values.
 Read [`SECURITY.md`](SECURITY.md) before granting anyone `KafkaAccess`
 create rights: the controller acts with an administrative principal.
 
+## Inspecting a running pod
+
+The image is distroless with no userland. Its `/bin/sh` is blairham/sh's
+[gated shell](https://github.com/blairham/sh/blob/main/gated/README.md): it
+cannot exec, signal or write, and reads only `/proc` and `/sys/fs/cgroup`.
+Builtins, globbing and redirection are enough to look around:
+
+```sh
+kubectl exec <pod> -- /bin/sh -c 'for d in /proc/[0-9]*; do read -r c < "$d/comm"; echo "${d#/proc/} $c"; done'
+```
+
+Refusals are reported on stderr. Because the shell cannot exec, the chart uses
+HTTP probes only; keep it that way, and use `preStop: sleep` rather than an
+`exec` hook if one is ever needed.
+
 ## Contributing
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md). Contributions need a signed
