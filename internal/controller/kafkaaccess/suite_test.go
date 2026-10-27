@@ -99,10 +99,8 @@ func startManager(t *testing.T, ns string, factory EngineFactory) {
 		t.Fatalf("creating manager: %v", err)
 	}
 	r := New(Config{
-		Client: mgr.GetClient(),
-		Recorder: mgr.GetEventRecorderFor(
-			"kafkaaccess-test",
-		), //nolint:staticcheck // as cmd/manager: the kit takes a record.EventRecorder
+		Client:    mgr.GetClient(),
+		Recorder:  mgr.GetEventRecorder("kafkaaccess-test"),
 		NewEngine: factory,
 		// Each test runs its own manager in one process; controller names
 		// must otherwise be unique per process.
