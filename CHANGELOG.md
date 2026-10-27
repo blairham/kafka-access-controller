@@ -27,6 +27,9 @@ Pre-stable releases (`v0.x.y`) make no API-stability promise -- breaking changes
   `events.k8s.io` API (`mgr.GetEventRecorder`) and carry an action.
 - Go 1.26.10, which distrusts compromised intermediate certificates in
   `crypto/x509` (GO-2026-6809); the build image moves with it.
+- The Go build image is pulled from `mirror.gcr.io` instead of
+  `public.ecr.aws`, which rate-limits anonymous pulls from GitHub runners
+  (`429 Too Many Requests` failed the image build on `main` and on PRs).
 - Releases, the image and the chart are now built, signed and attested by
   the shared workflows in [blairham/.github](https://github.com/blairham/.github)
   (`go-release.yml`, `go-chart.yml`), so the keyless signing identity is that
