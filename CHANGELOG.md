@@ -8,6 +8,8 @@ Pre-stable releases (`v0.x.y`) make no API-stability promise -- breaking changes
 
 ## [Unreleased]
 
+## [0.0.4] - 2026-10-26
+
 ### Fixed
 
 - The controller no longer re-plans every `KafkaAccess` against the cluster
