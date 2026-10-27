@@ -8,8 +8,25 @@ Pre-stable releases (`v0.x.y`) make no API-stability promise -- breaking changes
 
 ## [Unreleased]
 
+### Fixed
+
+- The controller no longer re-plans every `KafkaAccess` against the cluster
+  about once a second. k8s-controller-kit v0.0.1 reconciled on every watch
+  event, including the reconciler's own status write, and each reconcile
+  opens a fresh IAM-authenticated admin client, so an idle resource cost the
+  brokers a new connection and several DescribeConfigs requests per second
+  for as long as the controller ran. On an MSK cluster those sessions all
+  expire together, and the broker's cleanup pass stalled every other
+  client's authentication for seconds, on a cycle of about three hours.
+  The kit's `GenerationChangedPredicate` (k8s-controller-kit#21) limits
+  reconciles to spec changes, deletions and the hourly drift pass.
+
 ### Changed
 
+- k8s-controller-kit v0.0.2: events are recorded through the
+  `events.k8s.io` API (`mgr.GetEventRecorder`) and carry an action.
+- Go 1.26.10, which distrusts compromised intermediate certificates in
+  `crypto/x509` (GO-2026-6809); the build image moves with it.
 - Releases, the image and the chart are now built, signed and attested by
   the shared workflows in [blairham/.github](https://github.com/blairham/.github)
   (`go-release.yml`, `go-chart.yml`), so the keyless signing identity is that

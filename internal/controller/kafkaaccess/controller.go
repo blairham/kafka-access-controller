@@ -11,7 +11,7 @@ import (
 	"github.com/blairham/k8s-controller-kit/plan"
 	"github.com/blairham/k8s-controller-kit/reconciler"
 	"github.com/prometheus/client_golang/prometheus"
-	"k8s.io/client-go/tools/record"
+	"k8s.io/client-go/tools/events"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/log"
@@ -40,7 +40,7 @@ const (
 // Config wires the reconciler.
 type Config struct {
 	Client   client.Client
-	Recorder record.EventRecorder
+	Recorder events.EventRecorder
 
 	// NewEngine opens the engine for a resource.
 	NewEngine EngineFactory
@@ -148,7 +148,7 @@ func New(cfg Config) *reconciler.Reconciler[*kafkav1alpha1.KafkaAccess] {
 
 // recordExtras writes the status this domain adds: the SCRAM Secret version
 // last applied, and the IAM policy under authorization iam.
-func recordExtras(ctx context.Context, rec record.EventRecorder, ka *kafkav1alpha1.KafkaAccess, a kafka.Access) {
+func recordExtras(ctx context.Context, rec events.EventRecorder, ka *kafkav1alpha1.KafkaAccess, a kafka.Access) {
 	if a.SCRAM != nil {
 		ka.Status.SCRAMSecretVersion = a.SCRAM.AppliedVersion
 	}
@@ -161,7 +161,7 @@ func recordExtras(ctx context.Context, rec record.EventRecorder, ka *kafkav1alph
 		// Admission validates the ARN, so this is a resource admitted before
 		// the pattern existed; say so rather than failing the topics.
 		log.FromContext(ctx).Error(err, "rendering IAM policy")
-		rec.Event(ka, "Warning", "IAMPolicyFailed", err.Error())
+		rec.Eventf(ka, nil, "Warning", "IAMPolicyFailed", "Reconcile", "%s", err.Error())
 		return
 	}
 	ka.Status.IAMPolicy = pol

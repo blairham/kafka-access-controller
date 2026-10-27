@@ -31,12 +31,9 @@ func main() {
 			"kafkaaccess": {
 				Watches: &kafkav1alpha1.KafkaAccess{},
 				Setup: func(mgr ctrl.Manager) error {
-					// The kit's Reconciler takes the old-API recorder until
-					// blairham/k8s-controller-kit#6.
-					recorder := mgr.GetEventRecorderFor("kafkaaccess") //nolint:staticcheck // kit#6
 					return kafkaaccess.New(kafkaaccess.Config{
 						Client:    mgr.GetClient(),
-						Recorder:  recorder,
+						Recorder:  mgr.GetEventRecorder("kafkaaccess"),
 						NewEngine: kafkaaccess.NewEngineFactory(mgr.GetClient()),
 						Registry:  metrics.Registry,
 					}).SetupWithManager(mgr)
