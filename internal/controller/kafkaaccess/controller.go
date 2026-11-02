@@ -35,6 +35,7 @@ const (
 // +kubebuilder:rbac:groups=kafka-access-controller.io,resources=kafkaaccesses/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=kafka-access-controller.io,resources=kafkaaccesses/finalizers,verbs=update
 // +kubebuilder:rbac:groups="",resources=events,verbs=create;patch
+// +kubebuilder:rbac:groups=events.k8s.io,resources=events,verbs=create;patch
 // +kubebuilder:rbac:groups="",resources=secrets,verbs=get;list;watch
 
 // Config wires the reconciler.

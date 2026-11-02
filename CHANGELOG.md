@@ -8,6 +8,16 @@ Pre-stable releases (`v0.x.y`) make no API-stability promise -- breaking changes
 
 ## [Unreleased]
 
+### Fixed
+
+- The controller's Kubernetes Events (`IAMPolicyFailed`, the kit's
+  `PartiallyApplied` and reconcile warnings) are recorded again. Since the
+  move to the events-API recorder (k8s-controller-kit v0.0.2), controller-runtime
+  writes them as `events.k8s.io/v1` Events, which the ClusterRole did not
+  grant: it allowed only core `events`, so every Event was refused and
+  dropped, with nothing but a log line to say so. The role now grants
+  `create` and `patch` on `events` in both groups.
+
 ## [0.0.4] - 2026-10-26
 
 ### Fixed
