@@ -1,6 +1,6 @@
 module github.com/blairham/kafka-access-controller
 
-go 1.26.10
+go 1.27.4
 
 require (
 	github.com/aws/aws-msk-iam-sasl-signer-go v1.0.4

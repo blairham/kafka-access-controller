@@ -11,7 +11,7 @@ on MSK (IAM, SCRAM or mTLS) and on any cluster that speaks the Kafka admin API.
 The sibling of `database-access-controller`; both are built on `k8s-controller-kit`.
 
 - Module: `github.com/blairham/kafka-access-controller`
-- Go 1.26, `controller-runtime` v0.25, `franz-go` (kgo/kadm), `aws-sdk-go-v2`,
+- Go 1.27, `controller-runtime` v0.25, `franz-go` (kgo/kadm), `aws-sdk-go-v2`,
   `hashicorp/cli`, `github.com/blairham/k8s-controller-kit`
 
 ## Quick Reference
